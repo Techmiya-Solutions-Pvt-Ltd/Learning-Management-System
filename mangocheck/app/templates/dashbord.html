@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+<body>
+
+<!-- Navbar -->
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container content-wrapper">
+        <a class="navbar-brand" href="#" onclick="changeContent('student')">LMS</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#" onclick="changeContent('student')" id="student-tab">Explore</a></li>
+
+                {% if request.user.is_authenticated   %}
+                    <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
+                    <li class="nav-item"><a class="btn signup" href="{% url 'logout' %}">Log out</a></li>
+                {% if request.is_teacher   %}
+                
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="changeContent('opportunity')" id="opportunity-tab">Opportunities</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'loginteacher' %}" id="teach-tab" onclick="changeContent('teach')" id="teach-tab">Teach on LMS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Log in</a></li>
+                    <li class="nav-item"><a class="btn signup" href="{% url 'index' %}">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Hero Section -->
+
+<section class="hero">
+    <div class="container content-wrapper">
+        <div class="row align-items-center">
+           
+            <div class="col-md-5">
+                <div id="hero-content" class="hero-content">
+                    <h1>Learn. Grow. Succeed.</h1>
+                             <p>Discover new skills and unlock your potential with LMS.</p>
+                             <a href="{% url 'index' %}" class="cta-button">Get Started</a>
+                </div>
+            </div>
+            <!-- Image (Right) -->
+            <div class="col-md-7 d-flex justify-content-end">
+                <div class="hero-image">
+                    <img src="{% static 'images/instructor.png' %}" alt="Instructor" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script ">
+function changeContent(section) {
+    let content = document.getElementById("hero-content");
+
+    // Reset active class on navbar links
+    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+    if (section === "student") {
+        content.innerHTML = `<h1>Learn. Grow. Succeed.</h1>
+                             <p>Discover new skills and unlock your potential with LMS.</p>
+                             <a href="{% url 'index' %}" class="cta-button">Get Started</a>`;
+        document.getElementById("student-tab").classList.add("active");
+    } 
+    else if (section === "opportunity") {
+        content.innerHTML = `<h1>Unlock Your Potential</h1>
+                             <p>Opportunities knock for those who are ready to open the door. Keep learning, keep growing.</p>
+                             <a href="#" class="cta-button">Explore Opportunities</a>`;
+        document.getElementById("opportunity-tab").classList.add("active");
+    } 
+    else if (section === "teach") {
+        content.innerHTML = `<h1>Come teach with us</h1>
+                             <p>Become an instructor and change lives—including your own.</p>
+                             <a href="#" class="cta-button">Start Teaching</a>`;
+        document.getElementById("teach-tab").classList.add("active");
+    }
+}
+</script>
+
+</body>
+</html>
