@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -84,8 +85,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "social_django.context_processors.backends",  # For social login
-                "social_django.context_processors.login_redirect",  # For social login
+                "social_django.context_processors.backends", 
+                "social_django.context_processors.login_redirect",
             ],
         },
     },
@@ -106,8 +107,8 @@ SOCIAL_ACCOUNT_PROVIDER={
     },
     "github": {
         "APP": {
-            "client_id": "Ov23liQrA0L7MNWHpBCt",
-            "secret": "6f98a92aed078652978606d39f3e2ab5a0a2ce46",
+            "client_id":os.environ.get("SOCIAL_AUTH_GITHUB_KEY"),
+            "secret":  os.environ.get("SOCIAL_AUTH_GITHUB_SECRET"),
             "key": "",
             "redirect_uri": "http://localhost:8000/dashbord",
         }
@@ -119,7 +120,7 @@ DATABASES = {
     
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'test_mongo',  # Authentication data stored in MongoDB Atlas
+        'NAME': 'test_mongo', 
         'CLIENT': {
             'host': 'mongodb+srv://kmnaveen777:naveen@atlas.eokhe.mongodb.net/',
            
@@ -163,20 +164,51 @@ AUTHENTICATION_BACKENDS = [
     'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.github.GithubOAuth2',
     'django.contrib.auth.backends.ModelBackend',
-    # 'allauth.accounts.auth_backends.AuthenticationBackend'# For traditional login
+  
 ]
 
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '505194174692-uj1sdt7mr1gpr9rqdkdbt0cko20lvg68.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-
-SOCIAL_AUTH_FACEBOOK_KEY = '598257113091958'
-SOCIAL_AUTH_FACEBOOK_SECRET = 'e1dc6f365c6ca0601d45ab890c026811'
 
 
+import os
 
-SOCIAL_AUTH_GITHUB_KEY = 'Ov23liQrA0L7MNWHpBCt'
-SOCIAL_AUTH_GITHUB_SECRET = '6f98a92aed078652978606d39f3e2ab5a0a2ce46'
+def load_env_file(file_path):
+    """Read .env file and load variables into environment"""
+    if os.path.exists(file_path):
+        with open(file_path) as f:
+            for line in f:
+                key, value = line.strip().split("=", 1)
+                os.environ[key] = value
+
+# Provide the absolute path to the .env file
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+load_env_file(env_path)
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get("SOCIAL_AUTH_FACEBOOK_KEY")
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get("SOCIAL_AUTH_FACEBOOK_SECRET")
+
+SOCIAL_AUTH_GITHUB_KEY = os.environ.get("SOCIAL_AUTH_GITHUB_KEY")
+SOCIAL_AUTH_GITHUB_SECRET = os.environ.get("SOCIAL_AUTH_GITHUB_SECRET")
+
+
+
+
+
+
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '505194174692-uj1sdt7mr1gpr9rqdkdbt0cko20lvg68.apps.googleusercontent.com'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+
+# SOCIAL_AUTH_FACEBOOK_KEY = '598257113091958'
+# SOCIAL_AUTH_FACEBOOK_SECRET = 'e1dc6f365c6ca0601d45ab890c026811'
+
+
+
+# SOCIAL_AUTH_GITHUB_KEY = 'Ov23liQrA0L7MNWHpBCt'
+# SOCIAL_AUTH_GITHUB_SECRET = '6f98a92aed078652978606d39f3e2ab5a0a2ce46'
 
 SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']
 # LOGIN_URL = 'dashboard'
@@ -189,7 +221,7 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 LOGIN_REDIRECT_URL = "dashbord"  
 LOGOUT_REDIRECT_URL = "/"
 
-# Social Auth Pipeline (Optional)
+
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -230,8 +262,8 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_PROVIDERS = {
     "github": {
         "APP": {
-            "client_id": "Ov23liQrA0L7MNWHpBCt",
-            "secret": "6f98a92aed078652978606d39f3e2ab5a0a2ce46",
+            "client_id": os.environ.get("SOCIAL_AUTH_GITHUB_KEY"),
+            "secret":  os.environ.get("SOCIAL_AUTH_GITHUB_SECRET"),
             "key": "",
             "redirect_uri": "http://localhost:8000/dashbord",
         }
@@ -243,8 +275,3 @@ SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
 
 
 
-
-# Client ID
-# Ov23liQrA0L7MNWHpBCt
-
-# 6f98a92aed078652978606d39f3e2ab5a0a2ce46
