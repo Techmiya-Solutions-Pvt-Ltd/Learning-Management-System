@@ -23,13 +23,13 @@
                 <li class="nav-item"><a class="nav-link" href="#" onclick="changeContent('student')" id="student-tab">Explore</a></li>
 
                 {% if request.user.is_authenticated   %}
-                    <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Profile </a></li>
                     <li class="nav-item"><a class="btn signup" href="{% url 'logout' %}">Log out</a></li>
                
                 
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="#" onclick="changeContent('opportunity')" id="opportunity-tab">Opportunities</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'loginteacher' %}" id="teach-tab" onclick="changeContent('teach')" id="teach-tab">Teach on LMS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"  onclick="changeContent('teach')" id="teach-tab">Teach on LMS</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Log in</a></li>
                     <li class="nav-item"><a class="btn signup" href="{% url 'index' %}">Sign Up</a></li>
                 {% endif %}
@@ -44,7 +44,27 @@
 <section class="hero">
     <div class="container content-wrapper">
         <div class="row align-items-center">
-           
+            {% if is_teacher %}
+    <p>Welcome, Teacher {{ request.user.username }} {{ request.user.last_name }}</p>
+{% else %}
+    <p>Welcome, {{ request.user.username }}</p>
+{% endif %}
+
+
+
+{% if is_teacher   %}
+
+<div class="col-md-5">
+    <div id="hero-content" class="hero-content">
+        <h1>Come teach with us</h1>
+                             <p>Become an instructor and change lives—including your own.</p>
+                             <a href="{% url 'loginteacher' %}" class="cta-button">Start Teaching</a>
+    </div>
+</div>
+
+
+
+{% else   %} 
             <div class="col-md-5">
                 <div id="hero-content" class="hero-content">
                     <h1>Learn. Grow. Succeed.</h1>
@@ -52,6 +72,7 @@
                              <a href="{% url 'index' %}" class="cta-button">Get Started</a>
                 </div>
             </div>
+    {%endif%}
             <!-- Image (Right) -->
             <div class="col-md-7 d-flex justify-content-end">
                 <div class="hero-image">
@@ -63,7 +84,7 @@
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script ">
+<script >
 function changeContent(section) {
     let content = document.getElementById("hero-content");
 
@@ -85,7 +106,7 @@ function changeContent(section) {
     else if (section === "teach") {
         content.innerHTML = `<h1>Come teach with us</h1>
                              <p>Become an instructor and change lives—including your own.</p>
-                             <a href="#" class="cta-button">Start Teaching</a>`;
+                             <a href="{% url 'loginteacher' %}" class="cta-button">Start Teaching</a>`;
         document.getElementById("teach-tab").classList.add("active");
     }
 }

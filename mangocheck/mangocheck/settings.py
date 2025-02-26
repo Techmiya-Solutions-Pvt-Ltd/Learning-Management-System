@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "dj_rest_auth",
+    "mangocheck",
 ]
 
 SITE_ID = 1
@@ -221,7 +222,6 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 LOGIN_REDIRECT_URL = "dashbord"  
 LOGOUT_REDIRECT_URL = "/"
 
-
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -232,6 +232,9 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
+    'mangocheck.auth_pipelines.create_teacher', 
+    'mangocheck.auth_pipelines.custom_function',
+    'mangocheck.auth_pipelines.assign_user_type',
 )
 
 # Internationalization

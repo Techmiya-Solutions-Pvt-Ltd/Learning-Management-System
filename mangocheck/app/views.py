@@ -68,7 +68,7 @@ def signup(request):
                 return render(request, "authunticate.html", {
                     "error_message": "User already exists"
                 })
-            # Save regular user in Django's auth_user model
+        print("User created")
         user = User(
                 username=username,
                 email=email,
@@ -89,6 +89,7 @@ def teacher_signup(request):
         email = request.POST['email']
         username = request.POST['username']
         password = request.POST['password']
+        
         
         if teacher_collection.find_one({"email": email}):
                 return render(request, "authteacher.html", {
@@ -123,6 +124,7 @@ def login_view(request):
         password = request.POST['password']
 
         user = authenticate(request, username=username, password=password)  
+        print("User created")
         if user is not None:
             login(request, user)  
             return redirect('dashbord')  # Redirect to dashboard
@@ -131,23 +133,55 @@ def login_view(request):
     return render(request, "dashbord.html")
 
 
+from django.contrib.auth import login
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.backends import BaseBackend
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # Get the user model
+
 def teacher_login(request):
     if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST["username"]
+        password = request.POST["password"]
 
-        teacher = teacher_collection.find_one({"username": username})  
-        if teacher and check_password(password, teacher["password"]):  
-            request.session["teacher_username"] = username 
-            return redirect("dashbord")  
+        teacher = teacher_collection.find_one({"username": username})  # Fetch from MongoDB
         
-        return render(request, "authteacher.html", {"error_message": "Invalid credentials"})
-    
-    return render(request, "dashbord.html")
-    
+        if teacher and check_password(password, teacher["password"]):  
+            # Retrieve or create user in Django authentication system
+            user, created = User.objects.get_or_create(username=username, defaults={"is_teacher": True})
 
-def dashbord(request):
-    return render(request, 'dashbord.html')
+            # Specify backend manually
+            user.backend = 'django.contrib.auth.backends.ModelBackend'  
+
+            login(request, user, backend=user.backend) 
+            
+            request.session["user_type"] = "teacher"
+            request.session["teacher_username"] = username
+
+            return redirect("dashbord")  
+
+        return render(request, "authteacher.html", {"error_message": "Invalid credentials"})
+
+    return render(request, "dashbord.html")
+
+
+
+
+from django.shortcuts import redirect
+
+def teacher_google_login(request):
+    request.session.flush()
+    request.session["user_type"] = "teacher"
+    return redirect("social:begin", "google-oauth2")
+
+def teacher_github_login(request):
+    request.session.flush()
+    request.session["user_type"] = "teacher"
+    return redirect("social:begin", "github")
+
+
 
 def logout_view(request):
     request.session.flush()
@@ -155,4 +189,28 @@ def logout_view(request):
     return redirect('dashbord') 
 
 
+def dashbord(request):
+    is_teacher = False
+
+    if request.user.is_authenticated:
+        google_social = request.user.social_auth.filter(provider="google-oauth2").first()
+        github_social = request.user.social_auth.filter(provider="github").first()
+
+        print("🔹 Session Data:", dict(request.session))  
+        print(f"🔹 Google Social: {google_social if google_social else 'None'}")
+        print(f"🔹 GitHub Social: {github_social if github_social else 'None'}")
+
+        user_type = request.session.get("user_type")
+        print(f"🔹 Session User Type: {user_type}")
+
+        # Check if logged in via OAuth or manual login
+        if user_type == "teacher" :
+            is_teacher = True
+
+        print(f"🔹 request.is_teacher: {is_teacher}")
+    
+    else:
+        print("🔹 Not authenticated")
+
+    return render(request, "dashbord.html", {"is_teacher": is_teacher})
 

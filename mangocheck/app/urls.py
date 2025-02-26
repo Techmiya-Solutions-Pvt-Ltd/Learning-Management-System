@@ -18,4 +18,7 @@ urlpatterns = [
     path('add/', views.add_person, name='add_person'),
     path('get/', views.get_person, name='get_person'),
     path('check-auth/', views.check_auth, name='check_auth'),
+    
+     path('teacher/google/login/', views.teacher_google_login, name='teacher_google_login'),
+     path('teacher/github/login/', views.teacher_github_login, name='teacher_github_login'),
 ]
