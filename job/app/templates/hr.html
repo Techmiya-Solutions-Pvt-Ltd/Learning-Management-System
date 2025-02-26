@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Job Management Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0d6efd;
+            --dark-blue: #0a58ca;
+            --light-blue: #e6f0ff;
+            --border-blue: #cfe2ff;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            background-color: white;
+            border-right: 1px solid var(--border-blue);
+            height: 100vh;
+            position: fixed;
+        }
+        
+        .sidebar .nav-link {
+            color: #495057;
+            border-radius: 0;
+            padding: 0.75rem 1.25rem;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .logo-container {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid var(--border-blue);
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: none;
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-blue);
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark-blue);
+            border-color: var(--dark-blue);
+        }
+        
+        .job-card {
+            border: 1px solid var(--border-blue);
+            border-left: 4px solid var(--primary-blue);
+            background-color: white;
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+        }
+        
+        .job-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        
+        .job-title {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+        
+        .company-name {
+            font-weight: 500;
+        }
+        
+        .badge-custom {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+        
+        .action-buttons button {
+            margin-right: 0.5rem;
+        }
+        
+        .top-bar {
+            background-color: white;
+            border-bottom: 1px solid var(--border-blue);
+            padding: 0.75rem 1.5rem;
+        }
+        
+        .search-container {
+            max-width: 400px;
+        }
+        
+        .modal-header {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .close {
+            color: white;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar d-flex flex-column flex-shrink-0 p-0 bg-white" style="width: 250px;">
+        <div class="logo-container text-center">
+            <h4 class="m-0 text-primary">HR Dashboard</h4>
+        </div>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-briefcase me-2"></i>
+                    Jobs Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-users me-2"></i>
+                    Candidates
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Analytics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-cog me-2"></i>
+                    Settings
+                </a>
+            </li>
+        </ul>
+        <div class="mt-auto p-3 border-top">
+            <div class="d-flex align-items-center">
+                <img src="/api/placeholder/40/40" class="rounded-circle me-2" alt="profile">
+                <div>
+                    <strong>HR Admin</strong>
+                    <div class="text-muted small">admin@company.com</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar mb-4 d-flex justify-content-between align-items-center rounded">
+            <div class="search-container">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search jobs...">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createJobModal">
+                    <i class="fas fa-plus me-2"></i> Create New Job
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 class="card-title text-primary">12</h3>
+                        <p class="card-text text-muted">Active Jobs</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 class="card-title text-primary">48</h3>
+                        <p class="card-text text-muted">Total Applications</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 class="card-title text-primary">5</h3>
+                        <p class="card-text text-muted">Interviews Scheduled</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 class="card-title text-primary">3</h3>
+                        <p class="card-text text-muted">Positions Filled</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jobs List Section -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Job Listings</span>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        Filter By
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#">All Jobs</a></li>
+                        <li><a class="dropdown-item" href="#">Active Jobs</a></li>
+                        <li><a class="dropdown-item" href="#">Closed Jobs</a></li>
+                        <li><a class="dropdown-item" href="#">Draft Jobs</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Job 1 -->
+                <div class="job-card p-3 rounded">
+                    <div class="d-md-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="job-title mb-1">Frontend Developer</h5>
+                            <h6 class="company-name text-secondary mb-2">Oracle</h6>
+                            <div class="mb-2">
+                                <span class="badge bg-light text-dark me-2"><i class="fas fa-map-marker-alt"></i> Bengaluru, Belgaum, Chennai</span>
+                                <span class="badge bg-light text-dark me-2"><i class="fas fa-money-bill-wave"></i> ₹3-4 LPA</span>
+                                <span class="badge bg-light text-dark me-2"><i class="fas fa-history"></i> 0-5 Years</span>
+                            </div>
+                            <div class="mb-2">
+                                <span class="badge badge-custom me-1">Java</span>
+                                <span class="badge badge-custom me-1">SQL</span>
+                            </div>
+                            <div class="small text-muted mt-2">
+                                <i class="fas fa-building me-1"></i> In office
+                            </div>
+                        </div>
+                        <div class="action-buttons mt-3 mt-md-0">
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editJobModal">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash-alt me-1"></i> Delete
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-eye me-1"></i> View Applications
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <p class="small text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </div>
+                </div>
+
+                <!-- Job 2 -->
+                <div class="job-card p-3 rounded">
+                    <div class="d-md-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="job-title mb-1">Backend Developer</h5>
+                            <h6 class="company-name text-secondary mb-2">Oracle</h6>
+                            <div class="mb-2">
+                                <span class="badge bg-light text-dark me-2"><i class="fas fa-map-marker-alt"></i> Bengaluru</span>
+                                <span class="badge bg-light text-dark me-2"><i class="fas fa-money-bill-wave"></i> ₹4-6 LPA</span>
+                                <span class="badge bg-light text-dark me-2"><i class="fas fa-history"></i> 1-3 Years</span>
+                            </div>
+                            <div class="mb-2">
+                                <span class="badge badge-custom me-1">Java</span>
+                                <span class="badge badge-custom me-1">Spring Boot</span>
+                                <span class="badge badge-custom me-1">SQL</span>
+                            </div>
+                            <div class="small text-muted mt-2">
+                                <i class="fas fa-building me-1"></i> In office
+                            </div>
+                        </div>
+                        <div class="action-buttons mt-3 mt-md-0">
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash-alt me-1"></i> Delete
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-eye me-1"></i> View Applications
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <p class="small text-muted">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                </div>
+
+                <!-- Job 3 -->
+                <div class="job-card p-3 rounded">
+                    <div class="d-md-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="job-title mb-1">Full Stack Developer</h5>
+                            <h6 class="company-name text-secondary mb-2">Oracle</h6>
+                            <div class="mb-2">
+                                <span class="badge bg-light text-dark me-2"><i class="fas fa-map-marker-alt"></i> Chennai</span>
+                                <span class="badge bg-light text-dark me-2"><i class="fas fa-money-bill-wave"></i> ₹5-7 LPA</span>
+                                <span class="badge bg-light text-dark me-2"><i class="fas fa-history"></i> 2-4 Years</span>
+                            </div>
+                            <div class="mb-2">
+                                <span class="badge badge-custom me-1">React</span>
+                                <span class="badge badge-custom me-1">Java</span>
+                                <span class="badge badge-custom me-1">SQL</span>
+                            </div>
+                            <div class="small text-muted mt-2">
+                                <i class="fas fa-home me-1"></i> Remote
+                            </div>
+                        </div>
+                        <div class="action-buttons mt-3 mt-md-0">
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash-alt me-1"></i> Delete
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-eye me-1"></i> View Applications
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <p class="small text-muted">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-white">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Job Modal -->
+    <div class="modal fade" id="createJobModal" tabindex="-1" aria-labelledby="createJobModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createJobModalLabel">Create New Job</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="jobTitle" class="form-label">Job Title*</label>
+                                <input type="text" class="form-control" id="jobTitle" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="company" class="form-label">Company*</label>
+                                <input type="text" class="form-control" id="company" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="location" class="form-label">Location(s)*</label>
+                                <input type="text" class="form-control" id="location" placeholder="Separate multiple locations with commas" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="jobType" class="form-label">Job Type*</label>
+                                <select class="form-select" id="jobType" required>
+                                    <option value="">Select job type</option>
+                                    <option value="in-office">In Office</option>
+                                    <option value="remote">Remote</option>
+                                    <option value="hybrid">Hybrid</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="salary" class="form-label">Salary Range*</label>
+                                <input type="text" class="form-control" id="salary" placeholder="e.g., ₹3-4 LPA" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="experience" class="form-label">Experience Range*</label>
+                                <input type="text" class="form-control" id="experience" placeholder="e.g., 0-5 Years" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="skills" class="form-label">Required Skills*</label>
+                            <input type="text" class="form-control" id="skills" placeholder="Separate skills with commas" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Job Description*</label>
+                            <textarea class="form-control" id="description" rows="5" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="responsibilities" class="form-label">Responsibilities</label>
+                            <textarea class="form-control" id="responsibilities" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="qualifications" class="form-label">Qualifications</label>
+                            <textarea class="form-control" id="qualifications" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="deadline" class="form-label">Application Deadline</label>
+                                <input type="date" class="form-control" id="deadline">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status">
+                                    <option value="active">Active</option>
+                                    <option value="draft">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Create Job</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Job Modal -->
+    <div class="modal fade" id="editJobModal" tabindex="-1" aria-labelledby="editJobModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editJobModalLabel">Edit Job: Frontend Developer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editJobTitle" class="form-label">Job Title*</label>
+                                <input type="text" class="form-control" id="editJobTitle" value="Frontend Developer" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editCompany" class="form-label">Company*</label>
+                                <input type="text" class="form-control" id="editCompany" value="Oracle" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editLocation" class="form-label">Location(s)*</label>
+                                <input type="text" class="form-control" id="editLocation" value="Bengaluru, Belgaum, Chennai" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editJobType" class="form-label">Job Type*</label>
+                                <select class="form-select" id="editJobType" required>
+                                    <option value="in-office" selected>In Office</option>
+                                    <option value="remote">Remote</option>
+                                    <option value="hybrid">Hybrid</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editSalary" class="form-label">Salary Range*</label>
+                                <input type="text" class="form-control" id="editSalary" value="₹3-4 LPA" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editExperience" class="form-label">Experience Range*</label>
+                                <input type="text" class="form-control" id="editExperience" value="0-5 Years" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editSkills" class="form-label">Required Skills*</label>
+                            <input type="text" class="form-control" id="editSkills" value="Java, SQL" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editDescription" class="form-label">Job Description*</label>
+                            <textarea class="form-control" id="editDescription" rows="5" required>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editResponsibilities" class="form-label">Responsibilities</label>
+                            <textarea class="form-control" id="editResponsibilities" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editQualifications" class="form-label">Qualifications</label>
+                            <textarea class="form-control" id="editQualifications" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editDeadline" class="form-label">Application Deadline</label>
+                                <input type="date" class="form-control" id="editDeadline">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editStatus" class="form-label">Status</label>
+                                <select class="form-select" id="editStatus">
+                                    <option value="active" selected>Active</option>
+                                    <option value="closed">Closed</option>
+                                    <option value="draft">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
