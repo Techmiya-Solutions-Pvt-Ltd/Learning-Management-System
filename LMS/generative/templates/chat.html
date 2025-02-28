@@ -1,0 +1,671 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <title>AI Assistant</title>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --user-message: #e9ecef;
+            --ai-message: #f8f9fa;
+            --light-border: #dee2e6;
+            --header-bg: #4361ee;
+            --header-text: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fb;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 1.2rem 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .logo i {
+            font-size: 1.8rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .chat-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 70vh;
+        }
+        
+        .chat-header {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-bottom: 1px solid var(--light-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chat-title {
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .chat-status {
+            font-size: 0.8rem;
+            color: #4caf50;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            scroll-behavior: smooth;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            max-width: 85%;
+            padding: 1rem;
+            border-radius: 10px;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        .user {
+            background: var(--user-message);
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        
+        .model {
+            background: var(--ai-message);
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .sender {
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+        }
+        
+        .user .sender {
+            color: #495057;
+            text-align: right;
+        }
+        
+        .model .sender {
+            color: var(--primary-color);
+        }
+        
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid var(--light-border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #f8f9fa;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        #message-box {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--light-border);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s;
+        }
+        
+        #message-box:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+      
+        .question-form {
+            background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--light-border);
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        }
+
+
+        #generate-btn {
+            width: 100%;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .form-group {
+            margin-bottom: 0.8rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--light-border);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .section-inputs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+                margin: 0.5rem auto;
+            }
+        
+            .chat-container {
+                height: 75vh; 
+                overflow-y: auto; 
+            }
+        
+            .message {
+                max-width: 90%;
+                font-size: 14px; 
+            }
+        
+            .section-inputs {
+                grid-template-columns: 1fr;
+                gap: 0.5rem
+            }
+        
+            #generate-btn {
+                padding: 0.7rem;
+                font-size: 0.85rem;
+                width: 100%; 
+            }
+        
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 14px;
+                width: 100%; 
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 0.3rem;
+            }
+        
+            .chat-container {
+                height: 70vh;
+            }
+        
+            .message {
+                max-width: 95%;
+                font-size: 13px;
+            }
+        
+            .btn {
+                padding: 0.5rem 0.8rem;
+                font-size: 12px;
+            }
+        
+            #generate-btn {
+                font-size: 0.8rem;
+                padding: 0.6rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .btn {
+                padding: 0.5rem 0.5rem;
+                font-size: 10px;
+            }
+            
+        }
+        @media (max-width: 480px) {
+            #send-btn {
+                width: 50px;
+                padding: 0.6rem; 
+                padding-right: 0.7rem; 
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                white-space: nowrap; 
+            }
+        
+            #send-btn span {
+                display: none; 
+            }
+        
+            #send-btn i {
+                font-size: 1.3rem; 
+            }
+        }
+
+        #chat-box {
+            max-height: 400px; /* Adjust as needed */
+            overflow-y: auto;
+        }
+        
+        
+        
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-robot"></i>
+            <span>AI Assistant</span>
+        </div>
+        <div class="menu">
+            <i class="fas fa-cog"></i>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-title">AI Conversation</div>
+                <div class="chat-status">
+                    <i class="fas fa-circle"></i> Online
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chat-box">
+              
+                <div class="message model">
+                    <div class="sender">AI Assistant</div>
+                    Hello! How can I help you today?
+                </div>
+            </div>
+            
+            <div id="question-form" class="question-form hidden">
+                <div class="form-group">
+                    <label for="difficulty">Difficulty Level:</label>
+                    <select id="difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Number of Questions Per Section:</label>
+                    <div class="section-inputs">
+                        <div>
+                            <label for="numerical">Numerical Ability:</label>
+                            <input type="number" id="numerical" min="0" max="50" value="10">
+                        </div>
+                        <div>
+                            <label for="verbal">Verbal:</label>
+                            <input type="number" id="verbal" min="0" max="50" value="10">
+                        </div>
+                        <div>
+                            <label for="reasoning">Reasoning:</label>
+                            <input type="number" id="reasoning" min="0" max="50" value="10">
+                        </div>
+                        <div>
+                            <label for="coding">Coding Snippet:</label>
+                            <input type="number" id="coding" min="0" max="50" value="10">
+                        </div>
+                    </div>
+                </div>
+                <button id="generate-btn" class="btn btn-primary">
+                    <i class="fas fa-file-alt"></i> Generate Questions
+                </button>
+            </div>
+            
+            <div class="chat-input">
+                <div class="action-buttons">
+                    <button id="chat-btn" class="btn btn-outline">
+                        <i class="fas fa-comment"></i> Chat with Us
+                    </button>
+                    <button id="question-paper-btn" class="btn btn-outline">
+                        <i class="fas fa-file-alt"></i> Generate Question Paper
+                    </button>
+                </div>
+                <div class="input-row">
+                    <input type="text" id="message-box" placeholder="Type your message here..." autofocus>
+                    <button id="send-btn" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> <span>Send</span>
+                    </button>
+                    
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="download-btn" class="btn btn-outline" onclick="downloadChat()">
+                <i class="fas fa-download"></i> Download Chat History
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("send-btn").addEventListener("click", sendMessage);
+        document.getElementById("message-box").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+        
+        document.getElementById("chat-btn").addEventListener("click", function() {
+            document.getElementById("question-form").classList.add("hidden");
+            document.getElementById("message-box").focus();
+            
+            // Add AI message "Ok tell me what you want"
+            let chatBox = document.getElementById("chat-box");
+            let aiDiv = document.createElement("div");
+            aiDiv.className = "message model";
+            
+            let aiSenderDiv = document.createElement("div");
+            aiSenderDiv.className = "sender";
+            aiSenderDiv.textContent = "AI Assistant";
+            
+            aiDiv.appendChild(aiSenderDiv);
+            aiDiv.appendChild(document.createTextNode("Ok, tell me what you want."));
+            chatBox.appendChild(aiDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+        
+        document.getElementById("question-paper-btn").addEventListener("click", function() {
+            document.getElementById("question-form").classList.remove("hidden");
+        });
+        
+        document.getElementById("generate-btn").addEventListener("click", generateQuestionPaper);
+
+        function sendMessage() {
+            let messageBox = document.getElementById("message-box");
+            let chatBox = document.getElementById("chat-box");
+            let message = messageBox.value.trim();
+            
+            if (message) {
+                let userDiv = document.createElement("div");
+                userDiv.className = "message user";
+                
+                let senderDiv = document.createElement("div");
+                senderDiv.className = "sender";
+                senderDiv.textContent = "You";
+                
+                userDiv.appendChild(senderDiv);
+                userDiv.appendChild(document.createTextNode(message));
+                chatBox.appendChild(userDiv);
+        
+                // Show typing indicator
+                let typingDiv = document.createElement("div");
+                typingDiv.className = "message model";
+                typingDiv.innerHTML = '<div class="sender">AI Assistant</div>Typing...';
+                chatBox.appendChild(typingDiv);
+                
+                chatBox.scrollTop = chatBox.scrollHeight;
+                
+        
+                let csrftoken = getCookie("csrftoken");
+        
+                fetch("chat/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": csrftoken, 
+                    },
+                    body: "message=" + encodeURIComponent(message),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Remove typing indicator
+                    chatBox.removeChild(typingDiv);
+                    
+                    let aiDiv = document.createElement("div");
+                    aiDiv.className = "message model";
+                    
+                    let aiSenderDiv = document.createElement("div");
+                    aiSenderDiv.className = "sender";
+                    aiSenderDiv.textContent = "AI Assistant";
+                    
+                    aiDiv.appendChild(aiSenderDiv);
+                    aiDiv.appendChild(document.createTextNode(data.response));
+                    chatBox.appendChild(aiDiv);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                })
+                .catch(error => {
+                    // Remove typing indicator and show error
+                    chatBox.removeChild(typingDiv);
+                    
+                    let errorDiv = document.createElement("div");
+                    errorDiv.className = "message model";
+                    
+                    let errorSenderDiv = document.createElement("div");
+                    errorSenderDiv.className = "sender";
+                    errorSenderDiv.textContent = "System";
+                    
+                    errorDiv.appendChild(errorSenderDiv);
+                    errorDiv.appendChild(document.createTextNode("Sorry, there was an error processing your request."));
+                    chatBox.appendChild(errorDiv);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+        
+                messageBox.value = "";
+            }
+        }
+        
+        function generateQuestionPaper() {
+            let chatBox = document.getElementById("chat-box");
+            let difficulty = document.getElementById("difficulty").value;
+            let numerical = document.getElementById("numerical").value;
+            let verbal = document.getElementById("verbal").value;
+            let reasoning = document.getElementById("reasoning").value;
+            let coding = document.getElementById("coding").value;
+            
+            
+            let userMessage = `Generate a ${difficulty} difficulty question paper with: Numerical Ability (${numerical}), Verbal (${verbal}), Reasoning (${reasoning}), Coding Snippets (${coding})`;
+            
+            let userDiv = document.createElement("div");
+            userDiv.className = "message user";
+            
+            let senderDiv = document.createElement("div");
+            senderDiv.className = "sender";
+            senderDiv.textContent = "You";
+            
+            userDiv.appendChild(senderDiv);
+            userDiv.appendChild(document.createTextNode(userMessage));
+            chatBox.appendChild(userDiv);
+            
+            
+            let typingDiv = document.createElement("div");
+            typingDiv.className = "message model";
+            typingDiv.innerHTML = '<div class="sender">AI Assistant</div>Generating your question paper...';
+            chatBox.appendChild(typingDiv);
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            
+            let promptMessage = `Generate a multiple choice question paper in JSON format like each set of [question, choices,corrected answer]has id in that id these all there like  {1: {"question": "","options": [1,2,30],"corrected":30},2: {"question": "","options": [1,2,30],"corrected":30},}; with the following specifications:
+            - Difficulty level: ${difficulty}
+            - ${numerical} questions on Numerical Ability
+            - ${verbal} questions on Verbal Ability
+            - ${reasoning} questions on Reasoning
+            - ${coding} questions on Coding
+            
+            For each question, provide:
+            1. The question text
+            2. Four possible answers (A, B, C, D)
+            3. The correct answer
+            
+            Format the response as a JSON object with sections for each question type. only give {1: {"question": "","options": [1,2,30],"corrected":30},2: {"question": "","options": [1,2,30],"corrected":30},} like this format nothing to add numberical abiliy ,verbal,reasoning,coding snippets in json  give only json nothing to add easy medium hard in json make sure that random diffrent question will be generated for each response from previous response`;
+
+            document.getElementById("question-form").classList.add("hidden");
+            let csrftoken = getCookie("csrftoken");
+            
+            fetch("chat/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrftoken, 
+                },
+                body: "message=" + encodeURIComponent(promptMessage),
+            })
+            .then(response => response.json())
+            .then(data => {
+               
+                chatBox.removeChild(typingDiv);
+                
+                let aiDiv = document.createElement("div");
+                aiDiv.className = "message model";
+                
+                let aiSenderDiv = document.createElement("div");
+                aiSenderDiv.className = "sender";
+                aiSenderDiv.textContent = "AI Assistant";
+                
+                aiDiv.appendChild(aiSenderDiv);
+                aiDiv.appendChild(document.createTextNode(data.response));
+                chatBox.appendChild(aiDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                
+                
+                document.getElementById("question-form").classList.add("hidden");
+            })
+            .catch(error => {
+                // Remove typing indicator and show error
+                chatBox.removeChild(typingDiv);
+                
+                let errorDiv = document.createElement("div");
+                errorDiv.className = "message model";
+                
+                let errorSenderDiv = document.createElement("div");
+                errorSenderDiv.className = "sender";
+                errorSenderDiv.textContent = "System";
+                
+                errorDiv.appendChild(errorSenderDiv);
+                errorDiv.appendChild(document.createTextNode("Sorry, there was an error generating your question paper."));
+                chatBox.appendChild(errorDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                let cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        function downloadChat() {
+            window.location.href = "chat/download/";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Download JSON</title>
+</head>
+<body>
+  <button onclick="downloadJson()">Download JSON File</button>
+
+  <script>
+    function downloadJson() {
+      const jsonData = `[
+        {
+          "question": "A train travels 120 km in 2 hours. What is its average speed in km/h?",
+          "options": {
+            "A": "40",
+            "B": "60",
+            "C": "80",
+            "D": "100"
+          },
+          "correct_answer": "B"
+        },
+        {
+          "question": "If 6 workers can build a wall in 4 days, how many days will it take 8 workers to build the same wall?",
+          "options": {
+            "A": "2",
+            "B": "3",
+            "C": "5",
+            "D": "6"
+          },
+          "correct_answer": "B"
+        },
+        {
+          "question": "A sum of money is divided between A and B in the ratio 3:5. If B receives $100 more than A, what is the total sum of money?",
+          "options": {
+            "A": "$200",
+            "B": "$300",
+            "C": "$400",
+            "D": "$500"
+          },
+          "correct_answer": "C"
+        },
+        {
+          "question": "What is the area of a rectangle with a length of 12 cm and a width of 8 cm?",
+          "options": {
+            "A": "20 sq cm",
+            "B": "40 sq cm",
+            "C": "96 sq cm",
+            "D": "192 sq cm"
+          },
+          "correct_answer": "C"
+        },
+        {
+          "question": "A bag contains 3 red balls, 4 blue balls, and 5 green balls. If one ball is drawn at random, what is the probability that it is a red ball?",
+          "options": {
+            "A": "1/4",
+            "B": "1/3",
+            "C": "5/12",
+            "D": "1/2"
+          },
+          "correct_answer": "A"
+        }
+      ]`; // Your JSON data here        
+
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'aptitude_questions.json';
+      document.body.appendChild(a);     
+      a.click();
+      document.body.removeChild(a);     
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
