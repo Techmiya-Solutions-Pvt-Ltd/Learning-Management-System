@@ -19,16 +19,9 @@
         }
         
         .content-wrapper {
-            padding: 0 50px; /* Space on left and right */
+            padding: 0 50px; 
         }
         
-        /* Navbar styling - keeping structure but adding purple */
-        .navbar {
-            
-            background-color: white;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            padding: 15px 0;
-        }
         {% comment %} .navbar {
             position: fixed;
             top: 0;
@@ -36,9 +29,15 @@
             background-color: white;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             padding: 15px 0;
-            z-index: 1000; /* Ensures it stays above other elements */
+            z-index: 1000;
         } {% endcomment %}
         
+        .navbar {
+            
+            background-color: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
         .navbar-brand {
             font-weight: 700;
             color: var(--primary-purple);
@@ -56,7 +55,7 @@
             color: var(--primary-purple);
         }
         
-        /* Hero section */
+ 
         .hero {
             padding: 80px 0;
             background: linear-gradient(135deg, #f5f0ff 0%, #e6d9f2 100%);
@@ -483,10 +482,15 @@ function changeContent(section) {
     let courseSection = document.getElementById("course-section");
     let teachingSection = document.getElementById("teaching-section");
     
-    // Reset active class on navbar links
-    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
     
-    // Hide all card sections first
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        link.style.color = "#333"; 
+    });
+    
+    
+
+
     courseSection.style.display = "none";
     teachingSection.style.display = "none";
 
@@ -495,20 +499,25 @@ function changeContent(section) {
                              <p>Discover new skills and unlock your potential with LMS.</p>
                              <a href="{% url 'index' %}" class="cta-button">Get Started</a>`;
         document.getElementById("student-tab").classList.add("active");
-        courseSection.style.display = "block"; // Show course cards
+        document.getElementById("student-tab").style.color = "var(--primary-purple)";
+     
+        courseSection.style.display = "block"; 
     } 
     else if (section === "opportunity") {
         content.innerHTML = `<h1>Unlock Your Potential</h1>
                              <p>Opportunities knock for those who are ready to open the door. Keep learning, keep growing.</p>
                              <a href="#" class="cta-button">Explore Opportunities</a>`;
         document.getElementById("opportunity-tab").classList.add("active");
+        document.getElementById("opportunity-tab").style.color = "var(--primary-purple)";
+        
     } 
     else if (section === "teach") {
         content.innerHTML = `<h1>Come teach with us</h1>
                              <p>Become an instructor and change lives—including your own.</p>
                              <a href="{% url 'loginteacher' %}" class="cta-button">Start Teaching</a>`;
         document.getElementById("teach-tab").classList.add("active");
-        teachingSection.style.display = "block"; // Show teaching cards
+        teachingSection.style.display = "block";
+        document.getElementById("teach-tab").style.color = "var(--primary-purple)";
     }
 }
 </script>

@@ -346,10 +346,42 @@
             #send-btn i {
                 font-size: 1.3rem; 
             }
+            #message-box {
+                padding: 0.6rem 0.8rem;
+                font-size: 12px; 
+            }
+        }
+        @media (max-width: 280px) {
+            #send-btn {
+                width: 40px;
+                padding: 0.1rem; 
+                padding-right: 0.2rem; 
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                white-space: nowrap; 
+            }
+        
+            #send-btn span {
+                display: none; 
+            }
+        
+            #send-btn i {
+                font-size: 1rem; 
+            }
+            #message-box {
+                padding: 0.6rem 0.8rem;
+                font-size: 8px; 
+            }
         }
 
         #chat-box {
-            max-height: 400px; /* Adjust as needed */
+            max-height: 400px; 
+            overflow-y: auto;
+            
+        }
+        #question-form{
+            max-height: 400px; 
             overflow-y: auto;
         }
         
@@ -459,7 +491,7 @@
             document.getElementById("question-form").classList.add("hidden");
             document.getElementById("message-box").focus();
             
-            // Add AI message "Ok tell me what you want"
+           
             let chatBox = document.getElementById("chat-box");
             let aiDiv = document.createElement("div");
             aiDiv.className = "message model";
