@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import datetime
 
+
 @login_required
 def update_profile(request):
     if request.method == "POST":
@@ -58,6 +59,9 @@ def user_list(request):
     social_auths = list(social_auth_collection.find({}))  # Fetch social auth users
     
     return render(request, 'user_list.html', {'users': users, 'social_auths': social_auths})
+
+def api_jobs(request):
+    return render(request, 'Api_job.html')
 
 def job_list_view(request):  
     jobs = list(job_collection.find({}))  # Fetch jobs
