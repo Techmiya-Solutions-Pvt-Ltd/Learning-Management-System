@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Portal</title>
+    <title>Job List</title>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -233,6 +234,174 @@ footer {
     margin-top: 20px;
     opacity: 0.7;
 }
+
+
+
+.profile-sidebar {
+    position: fixed;
+    top: 0;
+    right: -350px; /* Hide sidebar by default */
+    width: 350px;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    overflow-y: auto; /* Make it scrollable */
+    z-index: 1000;
+}
+
+.profile-content {
+    padding: 20px;
+}
+
+.profile-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.profile-info {
+    margin-bottom: 20px;
+}
+
+.profile-info p {
+    margin: 10px 0;
+}
+
+.profile-pic-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.default-profile {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+}
+
+.progress {
+    height: 20px;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    background-color: #28a745;
+}
+
+.edit-profile-btn, .edit-password-link {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.edit-password-link {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+{% comment %} new side bar {% endcomment %}
+/* Sidebar styling */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 320px;
+    height: 100%;
+    background-color: #f8f9fa;
+    transition: all 0.3s;
+    z-index: 1050;
+    overflow-y: auto;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 1040;
+    display: none;
+}
+
+.profile-image-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 10px;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #dee2e6;
+}
+
+/* Circular Profile Completion Indicator */
+.profile-completion {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    border-radius: 50%;
+    border: 5px solid transparent;
+    transition: all 0.5s ease-in-out;
+}
+
+/* Profile Completion Animation */
+@keyframes progressRotate {
+    from { transform: rotate(-90deg); }
+    to { transform: rotate(calc(270deg * var(--progress))); }
+}
+
+
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.field-row {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+}
+
+.field-label {
+    font-weight: bold;
+    color: #6c757d;
+}
+
+.field-value {
+    font-weight: normal;
+}
+
+.edit-form .form-control {
+    margin-bottom: 10px;
+}
+
+
     </style>
 </head>
 <body>
@@ -294,70 +463,146 @@ footer {
     </div>
 </div>
 
+<pre>{{ user }}</pre>
+
+
+<!-- Sidebar Backdrop -->
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
 <!-- Profile Sidebar -->
-<div id="profile-sidebar" class="profile-sidebar">
-    <button class="close-btn">&times;</button>
-    <div class="profile-header">User Profile</div>
-    <div class="profile-content">
-        <div class="profile-pic-container">
-            {% if user.profile.image %}
-                <img id="profile-pic" src="{{ user.profile.image.url }}" class="profile-pic" alt="Profile Picture">
-            {% else %}
-                <svg class="default-profile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="12" fill="lightgray"/>
-                    <circle cx="12" cy="8" r="4" fill="gray"/>
-                    <path d="M6 20c0-4 2.5-7 6-7s6 3 6 7" fill="gray"/>
-                </svg>
-            {% endif %}
-            <input type="file" id="upload-profile-pic" style="display: none;">
+<div class="sidebar" id="profile-sidebar">
+    <div class="close-btn" id="close-sidebar">&times;</div>
+    
+    <!-- View Profile Section -->
+    <div id="view-profile">
+        <div class="profile-image-container">
+            <img id="profile-picture" src="/static/images/default-profile.png" class="img-fluid rounded-circle">
+            <div class="profile-completion" id="profile-completion"></div>
         </div>
-        <div class="profile-info mt-3">
-            <p><strong>Name:</strong> {{ user.username }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
+        <!-- Profile Completion Text Below Image -->
+        <p id="profile-completion-text" class="text-center mt-2 fw-bold" style="font-size: 16px; color: #198754;">0%</p>
+        
+        
+        
+        
+        <h4 class="text-center mb-4" id="profile-name"></h4>
+        
+        <div class="field-row">
+            <span class="field-label">Email:</span>
+            <span class="field-value" id="email-value"></span>
         </div>
-        <button class="btn btn-primary edit-profile-btn" id="edit-profile-btn">Edit Profile</button>
-        <p class="edit-password-link" id="edit-password-link">Edit Password</p>
-    </div>
+        
+        <div class="field-row">
+            <span class="field-label">Father's Name:</span>
+            <span class="field-value" id="father-name-value"></span>
+        </div>
+        
+        <div class="field-row">
+            <span class="field-label">UG College:</span>
+            <span class="field-value" id="ug-college-value"></span>
+        </div>
+        
+        <div class="field-row">
+            <span class="field-label">Branch:</span>
+            <span class="field-value" id="branch-value"></span>    
+        </div>
+        
+        <div class="field-row">
+            <span class="field-label">Passout Year:</span>
+            <span class="field-value" id="passout-year-value"></span>
+        </div>
+        
+        <div class="field-row">
+            <span class="field-label">Graduation Percentage:</span>
+            <span class="field-value" id="grad-percentage-value">}</span>
+        </div>
+        
+        <div class="field-row">
+            <span class="field-label">10th Percentage:</span>
+            <span class="field-value" id="tenth-percentage-value"></span>
+        </div>
+{% comment %}         
+        <div class="field-row">
+            <span class="field-label">12th Percentage:</span>
+            <span class="field-value" id="twelth-percentage-value"></span>
+        </div> {% endcomment %}
 
-    <!-- Edit Profile Form -->
-    <div id="edit-profile-form" style="display: none;">
-        <h3>Edit Profile</h3>
-        <form id="profile-update-form">
-            {% csrf_token %}
+        <button class="btn btn-primary w-100 mt-3" id="edit-profile-btn">Edit Profile</button>
+    </div>
+    
+    <!-- Edit Profile Section (Initially Hidden) -->
+    <div id="edit-profile" style="display: none;">
+        <h4 class="text-center mb-4">Edit Profile</h4>
+        
+        <form class="edit-form" id="profile-form">
             <div class="mb-3">
-                <label for="edit-username" class="form-label">Name</label>
-                <input type="text" id="edit-username" class="form-control" name="username" value="{{ user.username }}" required>
+                <label for="profile-pic-input" class="form-label">Profile Picture</label>
+                <input type="file" class="form-control" id="profile-pic-input" name="profile_picture" accept="image/*">
             </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            
             <div class="mb-3">
-                <label for="edit-email" class="form-label">Email</label>
-                <input type="email" id="edit-email" class="form-control" name="email" value="{{ user.email }}" required>
+                <label for="name-input" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name-input" name="name" value="">
             </div>
-            <button type="submit" class="btn btn-primary">Update Information</button>
+            
+            <div class="mb-3">
+                <label for="email-input" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email-input" name="email" value="">
+            </div>
+            
+            <div class="mb-3">
+                <label for="father-name-input" class="form-label">Father's Name</label>
+                <input type="text" class="form-control" id="father-name-input" name="father_name" value="">
+            </div>
+            
+            <div class="mb-3">
+                <label for="ug-college-input" class="form-label">UG College</label>
+                <input type="text" class="form-control" id="ug-college-input" name="ug_college" value="">
+            </div>
+            
+            <div class="mb-3">
+                <label for="branch-input" class="form-label">Branch</label>
+                <input type="text" class="form-control" id="branch-input" name="branch" value="">
+            </div>
+            
+            <div class="mb-3">
+                <label for="passout-year-input" class="form-label">Passout Year</label>
+                <input type="text" class="form-control" id="passout-year-input" name="passout_year" value="">
+            </div>
+            
+            <div class="mb-3">
+                <label for="grad-percentage-input" class="form-label">Graduation Percentage</label>
+                <input type="text" class="form-control" id="grad-percentage-input" name="graduation_percentage" value="">
+            </div>
+            
+            <div class="mb-3">
+                <label for="tenth-percentage-input" class="form-label">10th Percentage</label>
+                <input type="text" class="form-control" id="tenth-percentage-input" name="tenth_percentage" value="">
+            </div>
+            
+            {% comment %} <div class="mb-3">
+                <label for="twelth-percentage-input" class="form-label">12th Percentage</label>
+                <input type="text" class="form-control" id="twelth-percentage-input" name="twelfth_percentage" value="">
+            </div> {% endcomment %}
+            
+             <div class="d-flex gap-2">
+                <button type="button" class="btn btn-secondary flex-grow-1" id="cancel-edit-btn">Cancel</button>
+                <button type="submit" class="btn btn-success flex-grow-1" id="save-profile-btn">Save</button>
+            </div>
         </form>
     </div>
-
-    <!-- Edit Password Form -->
-    <div id="edit-password-form" style="display: none;">
-        <h3>Edit Password</h3>
-        <form id="password-update-form">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="current-password" class="form-label">Current Password</label>
-                <input type="password" id="current-password" class="form-control" name="current_password" required>
-            </div>
-            <div class="mb-3">
-                <label for="new-password" class="form-label">New Password</label>
-                <input type="password" id="new-password" class="form-control" name="new_password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Update Password</button>
-        </form>
+    
     </div>
 </div>
+
+
 
 <!-- Job List Section -->
 <div class="container mt-4">
     <div class="table-container">
-        <h2 class="text-center mb-4 text-primary fw-bold display-4">Job Listings</h2>
+        <h2 class="text-center mb-4 text-primary fw-bold display-4">Available Jobs</h2>
+
 
 
         <!-- Search Bar -->
@@ -516,6 +761,10 @@ footer {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
+    
+    
+
     $(document).ready(function(){
         $("#removeFilterButton").on("click", function() {
             location.reload(); // Refresh the page to remove filters
@@ -593,75 +842,8 @@ footer {
             }
         });
 
-        // Profile Sidebar Toggle
-        $("#profile-btn").on("click", function() {
-            console.log("Profile button clicked"); // Debug log
-            $("#profile-sidebar").css("right", "0");
-        });
+       
         
-        $(document).on("click", function(event) {
-            if (!$(event.target).closest("#profile-sidebar, #profile-btn").length) {
-                $("#profile-sidebar").css("right", "-350px");
-                $("#edit-profile-form, #edit-password-form").hide();
-                $(".profile-content").show();
-            }
-        });
-
-        // Close Button Functionality
-        $(".close-btn").on("click", function() {
-            $("#profile-sidebar").css("right", "-350px");
-            $("#edit-profile-form, #edit-password-form").hide();
-            $(".profile-content").show();
-        });
-
-        // Edit Profile Button
-        $("#edit-profile-btn").on("click", function() {
-            $(".profile-content").hide();
-            $("#edit-profile-form").show();
-        });
-        
-        // Edit Password Link
-        $("#edit-password-link").on("click", function() {
-            $(".profile-content").hide();
-            $("#edit-password-form").show();
-        });
-        
-        // AJAX Profile Update
-        $("#profile-update-form").on("submit", function(e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
-            $.ajax({
-                url: "{% url 'update_profile' %}",
-                method: "POST",
-                data: formData,
-                success: function(response) {
-                    if (response.success) {
-                        location.reload();  // Reload to update profile info
-                    } else {
-                        alert("Error updating profile: " + response.error);
-                    }
-                }
-            });
-        });
-        
-        // AJAX Password Update
-        $("#password-update-form").on("submit", function(e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
-            $.ajax({
-                url: "{% url 'update_password' %}",
-                method: "POST",
-                data: formData,
-                success: function(response) {
-                    if (response.success) {
-                        alert("Password updated successfully!");
-                        location.reload();
-                    } else {
-                        alert("Error updating password: " + response.error);
-                    }
-                }
-            });
-        });
         
         // Apply Button Functionality
         $(".apply-btn").on("click", function() {
@@ -736,6 +918,324 @@ footer {
             }
         });
     });
+
+   
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileBtn = document.getElementById('profile-btn');
+        const sidebar = document.getElementById('profile-sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const closeBtn = document.getElementById('close-sidebar');
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const saveProfileBtn = document.getElementById('save-profile-btn');
+        const viewProfileSection = document.getElementById('view-profile');
+        const editProfileSection = document.getElementById('edit-profile');
+        const profileForm = document.getElementById('profile-form');
+        const profileCompletion = document.getElementById('profile-completion');
+        const profileImg = document.getElementById('profile-picture');
+    
+        {% comment %} function fetchUserData() {
+            fetch('/user_list/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.user_data) {
+                        populateViewProfile(data.user_data);
+                    }
+                });
+        }
+     {% endcomment %}
+     
+        function populateViewProfile(userData) {
+            document.getElementById('profile-name').textContent = userData.user_name;
+            document.getElementById('email-value').textContent = userData.email;
+            document.getElementById('father-name-value').textContent = user.father_name;
+            document.getElementById('ug-college-value').textContent = userData.ug_college;
+            document.getElementById('branch-value').textContent = userData.branch;
+            document.getElementById('passout-year-value').textContent = userData.passout_year;
+            document.getElementById('grad-percentage-value').textContent = userData.grad_percentage + '';
+            document.getElementById('tenth-percentage-value').textContent = userData.tenth_percentage + '';
+            document.getElementById('twelth-percentage-value').textContent = userData.twelfth_percentage + '';
+    
+            {% comment %} updateProfileCompletion(userData); {% endcomment %}
+        }
+        function fetchUserData() {
+            fetch('/get_user_profile/')
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Fetched Data:", data); // Debugging line
+                    if (data.success && data.data.length > 0) {
+                        const userData = data.data[0]; // Extract first element
+                        populateViewProfile(userData);
+                        populateEditForm(userData);
+                        updateProfileCompletion(userData);
+                    } else {
+                        console.error('Failed to fetch user data');
+                    }
+                })
+                .catch(error => console.error('Error fetching user data:', error));
+        }
+        // Open sidebar
+        profileBtn.addEventListener('click', function() {
+            sidebar.classList.add('active');
+            backdrop.style.display = 'block';
+            fetchUserData();
+        });
+    
+        // Close sidebar
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            backdrop.style.display = 'none';
+            viewProfileSection.style.display = 'block';
+            editProfileSection.style.display = 'none';
+        }
+    
+        closeBtn.addEventListener('click', closeSidebar);
+        backdrop.addEventListener('click', closeSidebar);
+    
+        // Switch to edit mode
+        editProfileBtn.addEventListener('click', function() {
+            viewProfileSection.style.display = 'none';
+            editProfileSection.style.display = 'block';
+            fetchUserData(); // Fetch and populate edit form
+        });
+    
+        // Cancel edit
+        cancelEditBtn.addEventListener('click', function() {
+            viewProfileSection.style.display = 'block';
+            editProfileSection.style.display = 'none';
+        });
+        document.getElementById('profile-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+        
+            let formData = new FormData();  // Create a FormData object
+        
+            document.querySelectorAll("#profile-form input").forEach(input => {
+                if (input.name && input.type !== "file") {
+                    formData.append(input.name, input.value.trim());  // Append text fields
+                }
+            });
+        
+            // Append profile picture if selected
+            let profilePicInput = document.getElementById("profile-pic-input");
+            if (profilePicInput.files.length > 0) {
+                formData.append("profile_picture", profilePicInput.files[0]);
+            }
+        
+            console.log("Form data being sent:", formData); // Debugging
+        
+            fetch('/update_profile/', {
+                method: 'POST',
+                body: formData  // Send FormData (no JSON.stringify)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Server Response:", data); // Debugging
+                if (data.status === 'success') {
+                    alert("Profile updated successfully!");
+                    fetchUserData(); // Refresh profile data
+                    document.getElementById('edit-profile').style.display = 'none';
+                    document.getElementById('view-profile').style.display = 'block';
+                } else {
+                    alert("Error updating profile: " + data.message);
+                }
+            })
+            .catch(error => console.error('Fetch Error:', error));
+        });
+        
+
+        
+        
+   
+        
+        function populateViewProfile(userData) {
+            document.getElementById('profile-name').textContent = userData.user_name || 'N/A';
+            document.getElementById('email-value').textContent = userData.email || 'N/A';
+            document.getElementById('father-name-value').textContent = userData.father_name || 'N/A';
+            document.getElementById('ug-college-value').textContent = userData.ug_college || 'N/A';
+            document.getElementById('branch-value').textContent = userData.branch || 'N/A';
+            document.getElementById('passout-year-value').textContent = userData.Passout_Year || 'N/A';
+            document.getElementById('grad-percentage-value').textContent = userData.Graduation_Percentage ? userData.Graduation_Percentage.replace(/%+/g, '') : 'N/A';
+            document.getElementById('tenth-percentage-value').textContent = userData.Percentage_10 ? userData.Percentage_10.replace(/%+/g, '') : 'N/A';
+            console.log("Full Profile Picture Data:", userData.profile_picture);
+            profileImage = document.getElementById("profile-picture");
+            profileImage.src = `data:image/jpeg;base64, ${userData.profile_picture}`;
+
+            
+
+            {% comment %} document.getElementById('twelfth-percentage-value').textContent = userData.Percentage_12 ? userData.Percentage_12 + '' : 'N/A'; {% endcomment %}
+        }
+        
+        function populateEditForm(userData) {
+            try {
+                console.log("Populating form with:", userData);
+                document.getElementById('name-input').value = userData.user_name || '';
+                document.getElementById('email-input').value = userData.email || '';
+                document.getElementById('father-name-input').value = userData.father_name || '';
+                document.getElementById('ug-college-input').value = userData.ug_college || '';
+                document.getElementById('branch-input').value = userData.branch || '';
+                document.getElementById('passout-year-input').value = userData.Passout_Year || 'N/A';
+                document.getElementById('grad-percentage-input').value = userData.Graduation_Percentage ? userData.Graduation_Percentage.replace(/%+/g, '') : 'N/A';
+document.getElementById('tenth-percentage-input').value = userData.Percentage_10 ? userData.Percentage_10.replace(/%+/g, '') : 'N/A';
+
+            } catch (error) {
+                console.error("Error populating form:", error);
+            }
+        }
+        
+{% comment %}         {% endcomment %}
+    });
+   
+
+
+    
+
+
+
+
+    {% comment %} document.addEventListener('DOMContentLoaded', function () {
+        const profileBtn = document.getElementById('profile-btn');
+        const sidebar = document.getElementById('profile-sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const closeBtn = document.getElementById('close-sidebar');
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const profileForm = document.getElementById('profile-form');
+    
+        function fetchUserData() {
+            fetch('/get_user_profile/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        populateViewProfile(data.user_data);
+                        populateEditForm(data.user_data);
+                    }
+                })
+                .catch(error => console.error('Error fetching user data:', error));
+        }
+    
+        function populateViewProfile(userData) {
+            document.getElementById('profile-name').textContent = userData.username || 'N/A';
+            document.getElementById('email-value').textContent = userData.email || 'N/A';
+            document.getElementById('father-name-value').textContent = userData.father_name || 'N/A';
+            document.getElementById('ug-college-value').textContent = userData.ug_college || 'N/A';
+            document.getElementById('branch-value').textContent = userData.branch || 'N/A';
+            document.getElementById('passout-year-value').textContent = userData.passout_year || 'N/A';
+            document.getElementById('grad-percentage-value').textContent = userData.grad_percentage + '%' || 'N/A';
+            document.getElementById('tenth-percentage-value').textContent = userData.tenth_percentage + '%' || 'N/A';
+            document.getElementById('twelfth-percentage-value').textContent = userData.twelfth_percentage + '%' || 'N/A';
+        }
+    
+        function populateEditForm(userData) {
+            document.getElementById('name-input').value = userData.username || '';
+            document.getElementById('email-input').value = userData.email || '';
+            document.getElementById('father-name-input').value = userData.father_name || '';
+            document.getElementById('ug-college-input').value = userData.ug_college || '';
+            document.getElementById('branch-input').value = userData.branch || '';
+            document.getElementById('passout-year-input').value = userData.passout_year || '';
+            document.getElementById('grad-percentage-input').value = userData.grad_percentage || '';
+            document.getElementById('tenth-percentage-input').value = userData.tenth_percentage || '';
+            document.getElementById('twelfth-percentage-input').value = userData.twelfth_percentage || '';
+        }
+    
+        profileBtn.addEventListener('click', function () {
+            sidebar.classList.add('active');
+            backdrop.style.display = 'block';
+            fetchUserData();
+        });
+    
+        closeBtn.addEventListener('click', function () {
+            sidebar.classList.remove('active');
+            backdrop.style.display = 'none';
+        });
+    
+        cancelEditBtn.addEventListener('click', function () {
+            document.getElementById('view-profile').style.display = 'block';
+            document.getElementById('edit-profile').style.display = 'none';
+        });
+    
+        profileForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(profileForm);
+            
+            fetch('/update_profile/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    fetchUserData();
+                    document.getElementById('view-profile').style.display = 'block';
+                    document.getElementById('edit-profile').style.display = 'none';
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    });
+     {% endcomment %}
+
+
+     function updateProfileCompletion(userData) {
+        let profileFields = [
+            "user_name", "email", "father_name", "ug_college",
+            "branch", "passout_year", "Graduation_Percentage",
+            "Percentage_10", "Percentage_12", "profile_picture"
+        ];
+    
+        // Count only fields that are actually displayed in the profile sidebar
+        let displayedFields = profileFields.filter(field => {
+            let element = document.getElementById(`${field.replace(/_/g, "-")}-value`);
+            return element !== null; // Ensure the field exists
+        });
+    
+        let totalFields = displayedFields.length; // Use only visible fields
+        let filledFields = 0;
+    
+        displayedFields.forEach(field => {
+            let value = userData[field];
+    
+            // Only count valid (non-"N/A", non-empty) fields
+            if (value && value.trim() !== "" && value !== "N/A") {
+                filledFields++;
+            }
+        });
+    
+        // Ensure completion is accurately calculated
+        let completionPercentage = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+    
+        // Fix: If all displayed fields are filled, ensure it shows 100%
+        if (filledFields === totalFields) {
+            completionPercentage = 100;
+        }
+    
+        // Update circular progress bar
+        let profileCompletion = document.getElementById("profile-completion");
+        if (profileCompletion) {
+            let rotationAngle = (completionPercentage / 100) * 360 - 90;
+    
+            // Change color dynamically
+            let borderColor = completionPercentage >= 50 ? "#28a745" : "#dc3545"; // Green if > 50%, Red otherwise
+            profileCompletion.style.borderTopColor = borderColor;
+            profileCompletion.style.borderLeftColor = completionPercentage > 50 ? borderColor : "transparent";
+            profileCompletion.style.transform = `rotate(${rotationAngle}deg)`;
+        }
+    
+        // Update percentage text below profile picture
+        let completionText = document.getElementById("profile-completion-text");
+        if (completionText) {
+            completionText.textContent = `${completionPercentage}%`;
+            completionText.style.color = completionPercentage >= 50 ? "#28a745" : "#dc3545"; // Match color logic
+        }
+    
+        console.log("Profile Completion Updated:", completionPercentage + "%");
+    }
+
+    
+    // Call this function after fetching user data
+    fetchUserData();
+    
+    
 </script>
 
 </body>
