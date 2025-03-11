@@ -2,15 +2,60 @@ import json
 import google.generativeai as genai
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.decorators import login_required
+from pymongo import MongoClient
 
 api_key = "AIzaSyAPu6-WHl506r8YuIZjE6uHLFQIm1gORC4"
 genai.configure(api_key=api_key)
-
-
 model = genai.GenerativeModel("gemini-2.0-flash")
-
 chat_history = []
 
+url = 'mongodb+srv://kmnaveen777:naveen@atlas.eokhe.mongodb.net/'
+
+client = MongoClient(url)
+
+db = client["test_mongo"]  
+collection = db["questions"]
+skills_collection = db["skills"]
+
+
+def get_skills(request):
+    skills = list(skills_collection.find({}, {"_id": 0, "name": 1})) 
+    skill_names = [skill["name"] for skill in skills]
+    return JsonResponse(skill_names, safe=False)
+
+
+import re
+from datetime import datetime
+
+@login_required
+def store_question(request):
+    if request.method == "POST":
+        try:
+         
+            raw_data = request.body.decode("utf-8")
+
+ 
+            cleaned_data = re.sub(r"\\n", "", raw_data)
+
+            # print("hii",    request.session.teacher_id)
+            question_data = json.loads(cleaned_data)
+
+       
+            collection.insert_one({
+               
+                "questions": question_data,
+                "timestamp": datetime.utcnow().isoformat() 
+            })
+
+            return JsonResponse({"message": "Question set stored successfully!"}, status=201)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    return JsonResponse({"error": "Invalid request method"}, status=405) 
+
+
+@login_required(login_url="/loginteacher/")
 def chat_page(request):
     """Render chat page."""
     return render(request, "chat.html")

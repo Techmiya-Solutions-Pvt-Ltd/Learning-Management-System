@@ -21,5 +21,5 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("",include('app.urls')),
-    path("gen/", include("generative.urls")),
+    path("lmsai/", include("generative.urls"), name="lmsai"),
 ]

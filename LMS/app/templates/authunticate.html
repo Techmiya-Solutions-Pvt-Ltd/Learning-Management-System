@@ -178,6 +178,14 @@
         document.getElementById("loginForm").style.display = "none";
         document.getElementById("signupForm").style.display = "block";
     });
+    document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("signup") === "true") {
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("signupForm").style.display = "block";
+        }
+    });
+    
 
     document.getElementById("showLogin").addEventListener("click", function() {
         document.getElementById("signupForm").style.display = "none";

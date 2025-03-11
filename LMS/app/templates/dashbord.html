@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Page</title>
+    <title>{% block title %}Online Learning System{% endblock %}</title>
+    {% block extra_head %}{% endblock %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         :root {
@@ -57,7 +58,7 @@
         
  
         .hero {
-            padding: 80px 0;
+            padding: 100px 0;
             background: linear-gradient(135deg, #f5f0ff 0%, #e6d9f2 100%);
         }
         
@@ -210,6 +211,119 @@
             margin-right: 15px;
             font-size: 18px;
         }
+        .robot-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #3498db;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .robot-btn:hover {
+            background-color: #2980b9;
+            transform: scale(1.1);
+        }
+        
+        /* Robot icon styles */
+        .robot-icon {
+            width: 30px;
+            height: 35px;
+            position: relative;
+        }
+        
+        .robot-head {
+            width: 22px;
+            height: 16px;
+            background-color: white;
+            border-radius: 6px;
+            position: absolute;
+            top: 0;
+            left: 4px;
+        }
+        
+        .robot-eye {
+            width: 4px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+        }
+        
+        .robot-eye.left {
+            left: 6px;
+        }
+        
+        .robot-eye.right {
+            right: 6px;
+        }
+        
+        .robot-body {
+            width: 30px;
+            height: 20px;
+            background-color: white;
+            border-radius: 5px;
+            position: absolute;
+            top: 18px;
+            left: 0;
+        }
+        
+        .robot-arm {
+            width: 3px;
+            height: 12px;
+            background-color: white;
+            position: absolute;
+            top: 20px;
+        }
+        
+        .robot-arm.left {
+            left: -3px;
+        }
+        
+        .robot-arm.right {
+            right: -3px;
+        }
+        
+        .robot-leg {
+            width: 4px;
+            height: 8px;
+            background-color: white;
+            position: absolute;
+            top: 38px;
+        }
+        
+        .robot-leg.left {
+            left: 7px;
+        }
+        
+        .robot-leg.right {
+            right: 7px;
+        }
+        
+        /* Ripple effect for button click */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            animation: ripple 0.6s linear;
+            transform: scale(0);
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -232,7 +346,10 @@
                     <li class="nav-item"><a class="nav-link" href="#" onclick="changeContent('opportunity')" id="opportunity-tab">Opportunities</a></li>
                     <li class="nav-item"><a class="nav-link" href="#" onclick="changeContent('teach')" id="teach-tab">Teach on LMS</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Log in</a></li>
-                    <li class="nav-item"><a class="btn signup" href="{% url 'index' %}">Sign Up</a></li>
+                    <li class="nav-item">
+                        <a class="btn signup" href="{% url 'index' %}?signup=true">Sign Up</a>
+                    </li>
+                    
                 {% endif %}
             </ul>
         </div>
@@ -240,32 +357,31 @@
 </nav>
 
 <!-- Hero Section -->
+{% block content %}
 <section class="hero">
     <div class="container content-wrapper">
         <div class="row align-items-center">
-            {% if is_teacher %}
-                <p>Welcome, Teacher {{ request.user.username }} {{ request.user.last_name }}</p>
+           
+            {% if user.is_authenticated %}
+            <div class="col-md-5">
+                <div id="hero-content" class="hero-content">
+                    <h1>Learn. Grow. Succeed.</h1>
+                    <p>Discover new skills and unlock your potential with LMS.</p>
+                    <a href="{% url 'assessment' %}" class="cta-button">Go to Courses</a>
+                </div>
+            </div>
             {% else %}
-                <p>Welcome, {{ request.user.username }}</p>
-            {% endif %}
+            <div class="col-md-5">
+                <div id="hero-content" class="hero-content">
+                    <h1>Learn. Grow. Succeed.</h1>
+                    <p>Discover new skills and unlock your potential with LMS.</p>
+                    <a href="{% url 'index' %}" class="cta-button">Get Started</a>
+                </div>
+            </div>
 
-            {% if is_teacher %}
-                <div class="col-md-5">
-                    <div id="hero-content" class="hero-content">
-                        <h1>Come teach with us</h1>
-                        <p>Become an instructor and change lives—including your own.</p>
-                        <a href="{% url 'loginteacher' %}" class="cta-button">Start Teaching</a>
-                    </div>
-                </div>
-            {% else %}
-                <div class="col-md-5">
-                    <div id="hero-content" class="hero-content">
-                        <h1>Learn. Grow. Succeed.</h1>
-                        <p>Discover new skills and unlock your potential with LMS.</p>
-                        <a href="{% url 'index' %}" class="cta-button">Get Started</a>
-                    </div>
-                </div>
             {% endif %}
+            
+           
             
             <!-- Image (Right) -->
             <div class="col-md-7 d-flex justify-content-end">
@@ -275,9 +391,21 @@
             </div>
         </div>
     </div>
+    {% comment %} <a href="{% url 'chat_page' %}" class="robot-btn" id="robotBtn">
+        <div class="robot-icon">
+            <div class="robot-head">
+                <div class="robot-eye left"></div>
+                <div class="robot-eye right"></div>
+            </div>
+            <div class="robot-body"></div>
+            <div class="robot-arm left"></div>
+            <div class="robot-arm right"></div>
+            <div class="robot-leg left"></div>
+            <div class="robot-leg right"></div>
+        </div>
+    </a> {% endcomment %}
 </section>
 
-<!-- Course Cards Section (Initially Hidden) -->
 <section id="course-section" class="course-section">
     <div class="container content-wrapper">
         <h2 class="text-center mb-5" style="color: var(--dark-purple);">Explore Our Popular Courses</h2>
@@ -357,7 +485,7 @@
     </div>
 </section>
 
-<!-- Teaching Cards Section (Initially Hidden) -->
+
 <section id="teaching-section" class="teaching-section">
     <div class="container content-wrapper">
         <h2 class="text-center mb-5" style="color: var(--dark-purple);">Why Teach With Us</h2>
@@ -422,6 +550,7 @@
         </div>
     </div>
 </section>
+{% endblock %}
 
 <!-- Footer -->
 <footer>
@@ -477,6 +606,23 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    {% comment %} const robotBtn = document.getElementById('robotBtn');
+        
+        robotBtn.addEventListener('click', function(e) {
+            const x = e.clientX - e.target.getBoundingClientRect().left;
+            const y = e.clientY - e.target.getBoundingClientRect().top;
+            
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            
+            this.appendChild(ripple);
+            
+            setTimeout(function() {
+                ripple.remove();
+            }, 600);
+        }); {% endcomment %}
 function changeContent(section) {
     let content = document.getElementById("hero-content");
     let courseSection = document.getElementById("course-section");

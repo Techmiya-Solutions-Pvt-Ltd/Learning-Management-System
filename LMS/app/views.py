@@ -5,6 +5,19 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from pymongo import MongoClient
+from django.http import HttpResponseForbidden
+from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.backends import BaseBackend
+from django.contrib.auth import get_user_model
+from bson import ObjectId
+import json
+from datetime import datetime
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+
+
+
 
 url = 'mongodb+srv://kmnaveen777:naveen@atlas.eokhe.mongodb.net/'
 
@@ -12,6 +25,11 @@ client = MongoClient(url)
 
 db = client["test_mongo"]  
 teacher_collection = db["auth_teachers"] 
+users_collection = db["auth_user"]
+questions_collection = db["questions"] 
+courses_collection = db["Courses"]
+
+
 
 
 
@@ -20,6 +38,145 @@ teacher_collection = db["auth_teachers"]
 def index(request):
     return render(request, 'authunticate.html')
 
+
+
+
+@csrf_exempt 
+def add_course(request):
+    if request.method == "POST":
+        teacher_id = request.POST.get("teacher_id")
+        course_name = request.POST.get("course_name")
+        course_type = request.POST.get("course_type")
+        course_description = request.POST.get("course_description")
+        course_category = request.POST.get("course_category")
+        course_duration = request.POST.get("course_duration")
+
+        
+        new_course = {
+            "teacher_id": teacher_id,
+            "course_name": course_name,
+            "course_type": course_type,
+            "course_description": course_description,
+            "course_category": course_category,
+            "course_duration": course_duration,
+            "assignment_id": None
+        }
+        courses_collection.insert_one(new_course)
+        messages.success(request, "Course added successfully!")
+        return redirect("courses")  
+
+    return redirect("courses")
+
+
+def courses(request):
+    doc = questions_collection.find_one({"_id": ObjectId("67c82c0c2d306782adde4ccd")})
+
+    questions_dict = json.loads(doc['questions']['questions'])
+    timestramp=doc['timestamp']
+    formatted_datetime = datetime.fromisoformat(timestramp)
+
+    date = formatted_datetime.date().isoformat() 
+    time = formatted_datetime.time().strftime("%H:%M:%S")[:-3]
+    date_time=time+" on "+date
+    questions_details = doc['questions']
+    teacher_id = questions_details['teacher_id']
+    teacher_name_doc = teacher_collection.find_one({"_id": ObjectId(teacher_id)},{"first_name": 1, "second_name": 1, "_id": 0})
+    if teacher:
+        first_name = teacher_name_doc.get("first_name", "")
+        second_name = teacher_name_doc.get("second_name", "")
+        teacher_name = f"{first_name} {second_name}".strip()
+        
+    else:
+        teacher_name=None
+    
+    time_allotment= questions_details['time_allotment']
+    assessment_name = questions_details['assessment_name']
+    assessment_id="67c7e9c7348b64bc643990b4"
+    
+    questions={"teacher_name":teacher_name,"time_allotment":time_allotment,"assessment_name":assessment_name,"questions_dict":questions_dict,"assessment_id":assessment_id,"date_time":date_time}
+    
+    if request.user.is_authenticated:
+        # try:
+            
+            user = teacher_collection.find_one({"username": request.user.username}) 
+            # f=user["first_name"]+" "+user["last_name"]
+            # print(f)
+            # print(user)
+            
+            if user and "role" in user and user["role"] == "teacher":
+                user_data={
+                "full_name":user["first_name"]+" "+user["last_name"],
+                "email":user["email"],
+                "id":user["_id"],
+                }
+                assigned_courses = list(courses_collection.find({"teacher_id": str(user["_id"])}))
+                for course in assigned_courses:
+                    course["_id"] = str(course["_id"])
+                # print(assigned_courses)
+                return render(request, 'courses.html', {"questions": questions,"user_data":user_data,
+                "assigned_courses": assigned_courses})
+                
+            else:
+                print(request.user,"hi")
+                return HttpResponseForbidden("You are not authorized to access this page.")
+        
+    
+    return redirect('loginteacher')
+
+
+def assessment(request):
+    doc = questions_collection.find_one({"_id": ObjectId("67c82c0c2d306782adde4ccd")})
+
+    questions_dict = json.loads(doc['questions']['questions'])
+    timestramp=doc['timestamp']
+    formatted_datetime = datetime.fromisoformat(timestramp)
+
+    date = formatted_datetime.date().isoformat() 
+    time = formatted_datetime.time().strftime("%H:%M:%S")[:-3]
+    date_time=time+" on "+date
+    questions_details = doc['questions']
+    teacher_id = questions_details['teacher_id']
+    teacher_name_doc = teacher_collection.find_one({"_id": ObjectId(teacher_id)},{"first_name": 1, "second_name": 1, "_id": 0})
+    if teacher:
+        first_name = teacher_name_doc.get("first_name", "")
+        second_name = teacher_name_doc.get("second_name", "")
+        teacher_name = f"{first_name} {second_name}".strip()
+        
+    else:
+        teacher_name=None
+    
+    time_allotment= questions_details['time_allotment']
+    assessment_name = questions_details['assessment_name']
+    assessment_id="67c7e9c7348b64bc643990b4"
+    
+    questions={"teacher_name":teacher_name,"time_allotment":time_allotment,"assessment_name":assessment_name,"questions_dict":questions_dict,"assessment_id":assessment_id,"date_time":date_time}
+    
+    print(questions_dict)
+   
+        
+        
+    if request.user.is_authenticated:
+        try:
+            
+            user = users_collection.find_one({"id": request.user.id}) 
+            f=user["first_name"]+" "+user["last_name"]
+            print(f)
+            
+            if user and "role" in user and user["role"] == "student":
+                user_data={"full_name":user["first_name"]+" "+user["last_name"],"email":user["email"],"id":user["_id"]}
+                return render(request, 'assessment.html', {"questions": questions,"user_data":user_data})
+            else:
+                return HttpResponseForbidden("You are not authorized to access this page.")
+        except Exception as e:
+            print("User ID from request:", request.user.id, type(request.user.id))
+
+            print("Error fetching user:", str(e))
+
+    return HttpResponseForbidden("You are not authorized to access this page.")
+
+@login_required(login_url="/loginteacher/")
+def teacherpage(request):
+    return render(request, 'teacher.html')
 
 def teacher(request):
     return render(request, 'authteacher.html')
@@ -40,43 +197,52 @@ def check_auth(request):
         return HttpResponse(f"<h1>User is authenticated</h1>")
     return HttpResponse(f"<h1>User is not authenticated</h1>")
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
-
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
-from django.shortcuts import render, redirect
 
 def signup(request):
     if request.method == "POST":
+        print("1")
         first_name = request.POST.get('firstname', '').strip()
         last_name = request.POST.get('lastname', '').strip()
-        email = request.POST['email']
-        username = request.POST['username']
-        password = request.POST['password']
-        
+        email = request.POST.get('email', '').strip()
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
 
         hashed_password = make_password(password)
         
         
-        if User.objects.filter(email=email).exists():
-                return render(request, "authunticate.html", {
+        if User.objects.filter(email=email).count() > 0:
+            return render(request, "authunticate.html", {
+                "error_message": "Email already exists"
+            })
+
+        if User.objects.filter(username=username).count() > 0:
+            
+            return render(request, "authunticate.html", {
+                "error_message": "User already exists"
+            })
+        if teacher_collection.find_one({"email": email}):
+                return render(request, "authteacher.html", {
                     "error_message": "Email already exists"
                 })
-        if User.objects.filter(username=username).exists():
-                return render(request, "authunticate.html", {
+        if teacher_collection.find_one({"username": username}):
+                return render(request, "authteacher.html", {
                     "error_message": "User already exists"
                 })
-        print("User created")
+
+        
+       
         user = User(
-                username=username,
-                email=email,
-                password=hashed_password,
-                first_name=first_name,
-                last_name=last_name
-            )
+            username=username,
+            email=email,
+            password=hashed_password,
+            first_name=first_name,
+            last_name=last_name
+        )
         user.save()
+        users_collection.update_one(
+            {"email": email}, 
+            {"$set": {"role": "student"}}
+        )
 
         return redirect('index') 
 
@@ -99,6 +265,16 @@ def teacher_signup(request):
                 return render(request, "authteacher.html", {
                     "error_message": "User already exists"
                 })
+        if User.objects.filter(email=email).count() > 0:
+            return render(request, "authunticate.html", {
+                "error_message": "Email already exists"
+            })
+
+        if User.objects.filter(username=username).count() > 0:
+            
+            return render(request, "authunticate.html", {
+                "error_message": "User already exists"
+            })
         hashed_password = make_password(password)
         teacher_data = {
                 "username": username,
@@ -127,38 +303,33 @@ def login_view(request):
         print("User created")
         if user is not None:
             login(request, user)  
-            return redirect('dashbord')  # Redirect to dashboard
+            return redirect('dashbord')  
 
         return render(request, "authunticate.html", {"error_message": "Invalid credentials"})
     return render(request, "dashbord.html")
 
 
-from django.contrib.auth import login
-from django.contrib.auth.hashers import check_password
-from django.contrib.auth.models import AnonymousUser
-from django.contrib.auth.backends import BaseBackend
-from django.contrib.auth import get_user_model
 
-User = get_user_model()  # Get the user model
+
+User = get_user_model()  
 
 def teacher_login(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
 
-        teacher = teacher_collection.find_one({"username": username})  # Fetch from MongoDB
         
+        teacher = teacher_collection.find_one({"username": username})  
+
         if teacher and check_password(password, teacher["password"]):  
-            # Retrieve or create user in Django authentication system
-            user, created = User.objects.get_or_create(username=username, defaults={"is_teacher": True})
-
-            # Specify backend manually
-            user.backend = 'django.contrib.auth.backends.ModelBackend'  
-
-            login(request, user, backend=user.backend) 
-            
-            request.session["user_type"] = "teacher"
+            role = teacher.get("role", "student")
+            request.session["user_type"] = role  
             request.session["teacher_username"] = username
+            request.session["teacher_id"] = str(teacher["_id"])  
+
+            
+            user, created = User.objects.get_or_create(username=username)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend') 
 
             return redirect("dashbord")  
 
@@ -169,7 +340,7 @@ def teacher_login(request):
 
 
 
-from django.shortcuts import redirect
+
 
 def teacher_google_login(request):
     request.session.flush()
@@ -190,27 +361,12 @@ def logout_view(request):
 
 
 def dashbord(request):
-    is_teacher = False
+    is_teacher = False  
 
     if request.user.is_authenticated:
-        google_social = request.user.social_auth.filter(provider="google-oauth2").first()
-        github_social = request.user.social_auth.filter(provider="github").first()
+        user_type = request.session.get("user_type", "student")
+        is_teacher = user_type == "teacher"
 
-        print("🔹 Session Data:", dict(request.session))  
-        print(f"🔹 Google Social: {google_social if google_social else 'None'}")
-        print(f"🔹 GitHub Social: {github_social if github_social else 'None'}")
+    return render(request, "teacher.html" if is_teacher else "dashbord.html", {"is_teacher": is_teacher})
 
-        user_type = request.session.get("user_type")
-        print(f"🔹 Session User Type: {user_type}")
-
-        # Check if logged in via OAuth or manual login
-        if user_type == "teacher" :
-            is_teacher = True
-
-        print(f"🔹 request.is_teacher: {is_teacher}")
-    
-    else:
-        print("🔹 Not authenticated")
-
-    return render(request, "dashbord.html", {"is_teacher": is_teacher})
 
