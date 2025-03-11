@@ -875,7 +875,7 @@ footer {
 
     // Pagination
     $(document).ready(function () {
-        var jobsPerPage = 4;
+        var jobsPerPage = 3;
         var currentPage = 1;
         var jobCards = $(".job-card");
         var totalPages = Math.ceil(jobCards.length / jobsPerPage);
@@ -1087,94 +1087,6 @@ document.getElementById('tenth-percentage-input').value = userData.Percentage_10
    
 
 
-    
-
-
-
-
-    {% comment %} document.addEventListener('DOMContentLoaded', function () {
-        const profileBtn = document.getElementById('profile-btn');
-        const sidebar = document.getElementById('profile-sidebar');
-        const backdrop = document.getElementById('sidebar-backdrop');
-        const closeBtn = document.getElementById('close-sidebar');
-        const editProfileBtn = document.getElementById('edit-profile-btn');
-        const cancelEditBtn = document.getElementById('cancel-edit-btn');
-        const profileForm = document.getElementById('profile-form');
-    
-        function fetchUserData() {
-            fetch('/get_user_profile/')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        populateViewProfile(data.user_data);
-                        populateEditForm(data.user_data);
-                    }
-                })
-                .catch(error => console.error('Error fetching user data:', error));
-        }
-    
-        function populateViewProfile(userData) {
-            document.getElementById('profile-name').textContent = userData.username || 'N/A';
-            document.getElementById('email-value').textContent = userData.email || 'N/A';
-            document.getElementById('father-name-value').textContent = userData.father_name || 'N/A';
-            document.getElementById('ug-college-value').textContent = userData.ug_college || 'N/A';
-            document.getElementById('branch-value').textContent = userData.branch || 'N/A';
-            document.getElementById('passout-year-value').textContent = userData.passout_year || 'N/A';
-            document.getElementById('grad-percentage-value').textContent = userData.grad_percentage + '%' || 'N/A';
-            document.getElementById('tenth-percentage-value').textContent = userData.tenth_percentage + '%' || 'N/A';
-            document.getElementById('twelfth-percentage-value').textContent = userData.twelfth_percentage + '%' || 'N/A';
-        }
-    
-        function populateEditForm(userData) {
-            document.getElementById('name-input').value = userData.username || '';
-            document.getElementById('email-input').value = userData.email || '';
-            document.getElementById('father-name-input').value = userData.father_name || '';
-            document.getElementById('ug-college-input').value = userData.ug_college || '';
-            document.getElementById('branch-input').value = userData.branch || '';
-            document.getElementById('passout-year-input').value = userData.passout_year || '';
-            document.getElementById('grad-percentage-input').value = userData.grad_percentage || '';
-            document.getElementById('tenth-percentage-input').value = userData.tenth_percentage || '';
-            document.getElementById('twelfth-percentage-input').value = userData.twelfth_percentage || '';
-        }
-    
-        profileBtn.addEventListener('click', function () {
-            sidebar.classList.add('active');
-            backdrop.style.display = 'block';
-            fetchUserData();
-        });
-    
-        closeBtn.addEventListener('click', function () {
-            sidebar.classList.remove('active');
-            backdrop.style.display = 'none';
-        });
-    
-        cancelEditBtn.addEventListener('click', function () {
-            document.getElementById('view-profile').style.display = 'block';
-            document.getElementById('edit-profile').style.display = 'none';
-        });
-    
-        profileForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = new FormData(profileForm);
-            
-            fetch('/update_profile/', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    fetchUserData();
-                    document.getElementById('view-profile').style.display = 'block';
-                    document.getElementById('edit-profile').style.display = 'none';
-                } else {
-                    alert(data.message);
-                }
-            });
-        });
-    });
-     {% endcomment %}
-
 
      function updateProfileCompletion(userData) {
         let profileFields = [
@@ -1209,28 +1121,35 @@ document.getElementById('tenth-percentage-input').value = userData.Percentage_10
             completionPercentage = 100;
         }
     
-        // Update circular progress bar
-        let profileCompletion = document.getElementById("profile-completion");
-        if (profileCompletion) {
-            let rotationAngle = (completionPercentage / 100) * 360 - 90;
-    
-            // Change color dynamically
-            let borderColor = completionPercentage >= 50 ? "#28a745" : "#dc3545"; // Green if > 50%, Red otherwise
-            profileCompletion.style.borderTopColor = borderColor;
-            profileCompletion.style.borderLeftColor = completionPercentage > 50 ? borderColor : "transparent";
-            profileCompletion.style.transform = `rotate(${rotationAngle}deg)`;
-        }
-    
-        // Update percentage text below profile picture
-        let completionText = document.getElementById("profile-completion-text");
-        if (completionText) {
-            completionText.textContent = `${completionPercentage}%`;
-            completionText.style.color = completionPercentage >= 50 ? "#28a745" : "#dc3545"; // Match color logic
-        }
-    
-        console.log("Profile Completion Updated:", completionPercentage + "%");
-    }
+       // Update circular progress bar
+let profileCompletion = document.getElementById("profile-completion");
+if (profileCompletion) {
+    let adjustedPercentage = completionPercentage >= 80 ? 100 : completionPercentage;
+    let rotationAngle = (adjustedPercentage / 100) * 360 - 90;
 
+    // Change color dynamically
+    let borderColor = adjustedPercentage >= 50 ? "#28a745" : "#dc3545"; // Green if >= 50%, Red otherwise
+    profileCompletion.style.borderTopColor = borderColor;
+    profileCompletion.style.borderLeftColor = adjustedPercentage >= 10 ? borderColor : "transparent";
+    
+    // Ensure full circle when >= 80%
+    if (adjustedPercentage >= 80) {
+        profileCompletion.style.borderRightColor = borderColor;
+        profileCompletion.style.borderBottomColor = borderColor;
+    }
+    
+    profileCompletion.style.transform = `rotate(${rotationAngle}deg)`;
+}
+
+// Update percentage text below profile picture
+let completionText = document.getElementById("profile-completion-text");
+if (completionText) {
+    if(completionPercentage == 80){
+        completionPercentage=100 ;}
+    completionText.textContent = `${completionPercentage}%`;
+    completionText.style.color = completionPercentage >= 50 ? "#28a745" : "#dc3545"; // Match color logic
+}
+     }
     
     // Call this function after fetching user data
     fetchUserData();
