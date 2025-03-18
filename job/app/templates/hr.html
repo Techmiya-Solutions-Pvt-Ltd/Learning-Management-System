@@ -1,558 +1,449 @@
+<!-- hr_panel.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Job Management Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>HR Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-        :root {
-            --primary-blue: #0d6efd;
-            --dark-blue: #0a58ca;
-            --light-blue: #e6f0ff;
-            --border-blue: #cfe2ff;
-        }
-        
-        body {
-            background-color: #f8f9fa;
-        }
-        
-        .sidebar {
-            background-color: white;
-            border-right: 1px solid var(--border-blue);
-            height: 100vh;
-            position: fixed;
-        }
-        
-        .sidebar .nav-link {
-            color: #495057;
-            border-radius: 0;
-            padding: 0.75rem 1.25rem;
-        }
-        
-        .sidebar .nav-link:hover {
-            background-color: var(--light-blue);
-            color: var(--primary-blue);
-        }
-        
-        .sidebar .nav-link.active {
-            background-color: var(--primary-blue);
-            color: white;
-        }
-        
-        .logo-container {
-            padding: 1.5rem 1rem;
-            border-bottom: 1px solid var(--border-blue);
-        }
-        
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-        }
-        
-        .card {
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            border: none;
-            margin-bottom: 20px;
-        }
-        
-        .card-header {
-            background-color: white;
-            border-bottom: 1px solid var(--border-blue);
-            font-weight: 600;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-blue);
-            border-color: var(--primary-blue);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--dark-blue);
-            border-color: var(--dark-blue);
-        }
-        
         .job-card {
-            border: 1px solid var(--border-blue);
-            border-left: 4px solid var(--primary-blue);
-            background-color: white;
-            margin-bottom: 1rem;
-            transition: transform 0.2s;
+            transition: transform 0.3s;
+            height: 100%;
         }
-        
         .job-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-        
-        .job-title {
-            color: var(--primary-blue);
-            font-weight: 600;
+        .skills-badge {
+            margin-right: 5px;
+            margin-bottom: 5px;
         }
-        
-        .company-name {
-            font-weight: 500;
+        .applicant-card {
+            transition: all 0.3s;
         }
-        
-        .badge-custom {
-            background-color: var(--light-blue);
-            color: var(--primary-blue);
-            font-weight: 500;
-        }
-        
-        .action-buttons button {
-            margin-right: 0.5rem;
-        }
-        
-        .top-bar {
-            background-color: white;
-            border-bottom: 1px solid var(--border-blue);
-            padding: 0.75rem 1.5rem;
-        }
-        
-        .search-container {
-            max-width: 400px;
-        }
-        
-        .modal-header {
-            background-color: var(--primary-blue);
-            color: white;
-        }
-        
-        .close {
-            color: white;
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        .applicant-card:hover {
+            transform: scale(1.02);
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar d-flex flex-column flex-shrink-0 p-0 bg-white" style="width: 250px;">
-        <div class="logo-container text-center">
-            <h4 class="m-0 text-primary">HR Dashboard</h4>
-        </div>
-        <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item">
-                <a href="#" class="nav-link active">
-                    <i class="fas fa-briefcase me-2"></i>
-                    Jobs Management
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-users me-2"></i>
-                    Candidates
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-chart-line me-2"></i>
-                    Analytics
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-cog me-2"></i>
-                    Settings
-                </a>
-            </li>
-        </ul>
-        <div class="mt-auto p-3 border-top">
-            <div class="d-flex align-items-center">
-                <img src="/api/placeholder/40/40" class="rounded-circle me-2" alt="profile">
-                <div>
-                    <strong>HR Admin</strong>
-                    <div class="text-muted small">admin@company.com</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">HR Management Portal</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#jobs-section">Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#applicants-section">Applicants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'job_list' %}">Job_list</a>
+                    </li>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Top Bar -->
-        <div class="top-bar mb-4 d-flex justify-content-between align-items-center rounded">
-            <div class="search-container">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search jobs...">
-                    <button class="btn btn-primary">
-                        <i class="fas fa-search"></i>
-                    </button>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span class="text-light me-3">Welcome, {{ request.session.hr_username }}</span>
+                    <a href="{% url 'loginhr' %}" class="btn btn-outline-light btn-sm">Logout</a>
                 </div>
             </div>
-            <div>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createJobModal">
-                    <i class="fas fa-plus me-2"></i> Create New Job
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <!-- Alert Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Jobs Section -->
+        <section id="jobs-section" class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Job Listings</h2>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createJobModal">
+                    <i class="bi bi-plus-circle me-2"></i>Create New Job
                 </button>
             </div>
-        </div>
 
-        <!-- Dashboard Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h3 class="card-title text-primary">12</h3>
-                        <p class="card-text text-muted">Active Jobs</p>
-                    </div>
+            {% if hr_jobs %}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    {% for job in hr_jobs %}
+                        <div class="col">
+                            <div class="card job-card shadow-sm h-100">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">{{ job.Job }}</h5>
+                                    
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item edit-job" href="#" data-job-id="{{ job.id }}">Edit</a></li>
+                                            <li><a class="dropdown-item text-danger delete-job" href="#" data-job-id="{{ job.id }}">Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text"><i class="bi bi-building me-2"></i>{{ job.Org }}</p>
+                                    <p class="card-text"><i class="bi bi-geo-alt me-2"></i>{{ job.Location }}</p>
+                                    <p class="card-text"><i class="bi bi-currency-dollar me-2"></i>{{ job.Salary }}</p>
+                                    <p class="card-text"><i class="bi bi-briefcase me-2"></i>{{ job.job_type }}</p>
+                                    <p class="card-text"><i class="bi bi-calendar me-2"></i>Posted: {{ job.posted_date|date:"M d, Y" }}</p>
+                                    <p class="card-text"><i class="bi bi-geo-alt me-2"></i>Deadline: {{ job.deadline}}</p>
+                                    
+                                    <h6 class="mt-3">Skills Required:</h6>
+                                    <div>
+                                        {% for skill in job.Skills %}
+                                            <span class="badge bg-info text-dark skills-badge">{{ skill }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <h6>Description:</h6>
+                                        <p class="card-text">{{ job.FullDescription|truncatechars:150 }}</p>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <small class="text-muted">
+                                        <span class="badge bg-primary">{{ job.applicants_count|default:"0" }} Applicants</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h3 class="card-title text-primary">48</h3>
-                        <p class="card-text text-muted">Total Applications</p>
-                    </div>
+            {% else %}
+                <div class="alert alert-info">
+                    You haven't created any jobs yet. Use the "Create New Job" button to add your first job listing.
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h3 class="card-title text-primary">5</h3>
-                        <p class="card-text text-muted">Interviews Scheduled</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h3 class="card-title text-primary">3</h3>
-                        <p class="card-text text-muted">Positions Filled</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            {% endif %}
+        </section>
 
-        <!-- Jobs List Section -->
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span>Job Listings</span>
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        Filter By
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="#">All Jobs</a></li>
-                        <li><a class="dropdown-item" href="#">Active Jobs</a></li>
-                        <li><a class="dropdown-item" href="#">Closed Jobs</a></li>
-                        <li><a class="dropdown-item" href="#">Draft Jobs</a></li>
-                    </ul>
+        <!-- Applicants Section -->
+        <section id="applicants-section">
+            <h2 class="mb-4">Job Applicants</h2>
+            
+            {% if job_applications %}
+                <div class="accordion" id="applicantsAccordion">
+                    {% regroup job_applications by job_title as job_apps_list %}
+                    
+                    {% for application in job_applications %}
+                    <div class="col">
+                        <div class="card applicant-card shadow-sm h-100">
+                            <div class="card-header bg-light">
+                                <h5 class="card-title mb-0">{{ application.user.username }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><i class="bi bi-envelope me-2"></i>{{ application.user.email }}</p>
+                                <p><i class="bi bi-person me-2"></i>Father: {{ application.user.father_name }}</p>
+                                <p><i class="bi bi-mortarboard me-2"></i>Branch: {{ application.user.branch }}</p>
+                                <p><i class="bi bi-calendar me-2"></i>Passout Year: {{ application.user.Passout_Year }}</p>
+                                
+                                <div class="mt-3">
+                                    <h6>Education:</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-bordered">
+                                            <tr>
+                                                <th>Graduation</th>
+                                                <td>{{ application.user.Graduation_Percentage }}%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>12th</th>
+                                                <td>{{ application.user.Percentage_12 }}%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>10th</th>
+                                                <td>{{ application.user.Percentage_10 }}%</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <p class="mt-3"><i class="bi bi-info-circle me-2"></i>Progress: {{ application.user.progress }}</p>
+                                <p><i class="bi bi-calendar-check me-2"></i>Applied on: {{ application.applied_date|date:"M d, Y" }}</p>
+                            </div>
+                            <div class="card-footer bg-transparent d-flex justify-content-between">
+                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#contactApplicantModal" 
+                                        data-email="{{ application.user.email }}" data-name="{{ application.user.username }}">
+                                    Contact
+                                </button>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Status
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" data-application-id="{{ application.application_id }}" data-status="shortlisted">Shortlist</a></li>
+                                        <li><a class="dropdown-item" href="#" data-application-id="{{ application.application_id }}" data-status="interviewed">Interviewed</a></li>
+                                        <li><a class="dropdown-item" href="#" data-application-id="{{ application.application_id }}" data-status="selected">Select</a></li>
+                                        <li><a class="dropdown-item" href="#" data-application-id="{{ application.application_id }}" data-status="rejected">Reject</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
                 </div>
-            </div>
-            <div class="card-body">
-                <!-- Job 1 -->
-                <div class="job-card p-3 rounded">
-                    <div class="d-md-flex justify-content-between align-items-start">
-                        <div>
-                            <h5 class="job-title mb-1">Frontend Developer</h5>
-                            <h6 class="company-name text-secondary mb-2">Oracle</h6>
-                            <div class="mb-2">
-                                <span class="badge bg-light text-dark me-2"><i class="fas fa-map-marker-alt"></i> Bengaluru, Belgaum, Chennai</span>
-                                <span class="badge bg-light text-dark me-2"><i class="fas fa-money-bill-wave"></i> ₹3-4 LPA</span>
-                                <span class="badge bg-light text-dark me-2"><i class="fas fa-history"></i> 0-5 Years</span>
-                            </div>
-                            <div class="mb-2">
-                                <span class="badge badge-custom me-1">Java</span>
-                                <span class="badge badge-custom me-1">SQL</span>
-                            </div>
-                            <div class="small text-muted mt-2">
-                                <i class="fas fa-building me-1"></i> In office
-                            </div>
-                        </div>
-                        <div class="action-buttons mt-3 mt-md-0">
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editJobModal">
-                                <i class="fas fa-edit me-1"></i> Edit
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger">
-                                <i class="fas fa-trash-alt me-1"></i> Delete
-                            </button>
-                            <button class="btn btn-sm btn-outline-success">
-                                <i class="fas fa-eye me-1"></i> View Applications
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <p class="small text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                    </div>
+            {% else %}
+                <div class="alert alert-info">
+                    There are no applications for your job postings yet.
                 </div>
-
-                <!-- Job 2 -->
-                <div class="job-card p-3 rounded">
-                    <div class="d-md-flex justify-content-between align-items-start">
-                        <div>
-                            <h5 class="job-title mb-1">Backend Developer</h5>
-                            <h6 class="company-name text-secondary mb-2">Oracle</h6>
-                            <div class="mb-2">
-                                <span class="badge bg-light text-dark me-2"><i class="fas fa-map-marker-alt"></i> Bengaluru</span>
-                                <span class="badge bg-light text-dark me-2"><i class="fas fa-money-bill-wave"></i> ₹4-6 LPA</span>
-                                <span class="badge bg-light text-dark me-2"><i class="fas fa-history"></i> 1-3 Years</span>
-                            </div>
-                            <div class="mb-2">
-                                <span class="badge badge-custom me-1">Java</span>
-                                <span class="badge badge-custom me-1">Spring Boot</span>
-                                <span class="badge badge-custom me-1">SQL</span>
-                            </div>
-                            <div class="small text-muted mt-2">
-                                <i class="fas fa-building me-1"></i> In office
-                            </div>
-                        </div>
-                        <div class="action-buttons mt-3 mt-md-0">
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-edit me-1"></i> Edit
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger">
-                                <i class="fas fa-trash-alt me-1"></i> Delete
-                            </button>
-                            <button class="btn btn-sm btn-outline-success">
-                                <i class="fas fa-eye me-1"></i> View Applications
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <p class="small text-muted">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                    </div>
-                </div>
-
-                <!-- Job 3 -->
-                <div class="job-card p-3 rounded">
-                    <div class="d-md-flex justify-content-between align-items-start">
-                        <div>
-                            <h5 class="job-title mb-1">Full Stack Developer</h5>
-                            <h6 class="company-name text-secondary mb-2">Oracle</h6>
-                            <div class="mb-2">
-                                <span class="badge bg-light text-dark me-2"><i class="fas fa-map-marker-alt"></i> Chennai</span>
-                                <span class="badge bg-light text-dark me-2"><i class="fas fa-money-bill-wave"></i> ₹5-7 LPA</span>
-                                <span class="badge bg-light text-dark me-2"><i class="fas fa-history"></i> 2-4 Years</span>
-                            </div>
-                            <div class="mb-2">
-                                <span class="badge badge-custom me-1">React</span>
-                                <span class="badge badge-custom me-1">Java</span>
-                                <span class="badge badge-custom me-1">SQL</span>
-                            </div>
-                            <div class="small text-muted mt-2">
-                                <i class="fas fa-home me-1"></i> Remote
-                            </div>
-                        </div>
-                        <div class="action-buttons mt-3 mt-md-0">
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-edit me-1"></i> Edit
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger">
-                                <i class="fas fa-trash-alt me-1"></i> Delete
-                            </button>
-                            <button class="btn btn-sm btn-outline-success">
-                                <i class="fas fa-eye me-1"></i> View Applications
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <p class="small text-muted">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="card-footer bg-white">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center mb-0">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
+            {% endif %}
+        </section>
     </div>
 
     <!-- Create Job Modal -->
-    <div class="modal fade" id="createJobModal" tabindex="-1" aria-labelledby="createJobModalLabel" aria-hidden="true">
+    <div class="modal fade" id="createJobModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createJobModalLabel">Create New Job</h5>
+                    <h5 class="modal-title" id="jobModalTitle">Create New Job</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="row mb-3">
+                <form id="jobForm" method="post" action="{% url 'create_job' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="hr_id" value="{{ request.session.hr_id }}">
+                   <input type="hidden" name="job_id" id="job_id" value="">
+
+                    <div class="modal-body">
+                        <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="jobTitle" class="form-label">Job Title*</label>
-                                <input type="text" class="form-control" id="jobTitle" required>
+                                <label for="title" class="form-label">Job Title</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="company" class="form-label">Company*</label>
-                                <input type="text" class="form-control" id="company" required>
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="location" class="form-label">Location(s)*</label>
-                                <input type="text" class="form-control" id="location" placeholder="Separate multiple locations with commas" required>
+                                <label for="company" class="form-label">Company</label>
+                                <input type="text" class="form-control" id="company" name="company" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="jobType" class="form-label">Job Type*</label>
-                                <select class="form-select" id="jobType" required>
-                                    <option value="">Select job type</option>
-                                    <option value="in-office">In Office</option>
-                                    <option value="remote">Remote</option>
-                                    <option value="hybrid">Hybrid</option>
+                                <label for="location" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="location" name="location" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="salary" class="form-label">Salary</label>
+                                <input type="text" class="form-control" id="salary" name="salary" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="job_type" class="form-label">Job Type</label>
+                                <select class="form-select" id="job_type" name="job_type" required>
+                                    <option value="">Select...</option>
+                                    <option value="Full-time">Full-time</option>
+                                    <option value="Part-time">Part-time</option>
+                                    <option value="Contract">Contract</option>
+                                    <option value="Internship">Internship</option>
+                                    <option value="Remote">Remote</option>
                                 </select>
                             </div>
-                        </div>
-                        
-                        <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="salary" class="form-label">Salary Range*</label>
-                                <input type="text" class="form-control" id="salary" placeholder="e.g., ₹3-4 LPA" required>
+                                <label for="experience" class="form-label">Experience Required (years)</label>
+                                <input type="number" class="form-control" id="experience" name="experience" min="0" max="20" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="skills" class="form-label">Skills Required (comma separated)</label>
+                                <input type="text" class="form-control" id="skills" name="Skills" placeholder="Python, JavaScript, HTML, CSS" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="description" class="form-label">Job Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
                             </div>
                             <div class="col-md-6">
-                                <label for="experience" class="form-label">Experience Range*</label>
-                                <input type="text" class="form-control" id="experience" placeholder="e.g., 0-5 Years" required>
+                                <label for="education" class="form-label">Education Requirements</label>
+                                <input type="text" class="form-control" id="education" name="education" required>
                             </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="skills" class="form-label">Required Skills*</label>
-                            <input type="text" class="form-control" id="skills" placeholder="Separate skills with commas" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Job Description*</label>
-                            <textarea class="form-control" id="description" rows="5" required></textarea>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="responsibilities" class="form-label">Responsibilities</label>
-                            <textarea class="form-control" id="responsibilities" rows="3"></textarea>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="qualifications" class="form-label">Qualifications</label>
-                            <textarea class="form-control" id="qualifications" rows="3"></textarea>
-                        </div>
-                        
-                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="deadline" class="form-label">Application Deadline</label>
-                                <input type="date" class="form-control" id="deadline">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="status" class="form-label">Status</label>
-                                <select class="form-select" id="status">
-                                    <option value="active">Active</option>
-                                    <option value="draft">Draft</option>
-                                </select>
+                                <input type="date" class="form-control" id="deadline" name="deadline" required>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Create Job</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Job</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Edit Job Modal -->
-    <div class="modal fade" id="editJobModal" tabindex="-1" aria-labelledby="editJobModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <!-- Contact Applicant Modal -->
+    <div class="modal fade" id="contactApplicantModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editJobModalLabel">Edit Job: Frontend Developer</h5>
+                    <h5 class="modal-title">Contact Applicant</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="contactForm" method="post" action="{% url 'contact_applicant' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="hidden" id="applicant_email" name="applicant_email">
+                        <div class="mb-3">
+                            <label for="email_subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="email_subject" name="subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email_message" class="form-label">Message</label>
+                            <textarea class="form-control" id="email_message" name="message" rows="6" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteJobModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="editJobTitle" class="form-label">Job Title*</label>
-                                <input type="text" class="form-control" id="editJobTitle" value="Frontend Developer" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="editCompany" class="form-label">Company*</label>
-                                <input type="text" class="form-control" id="editCompany" value="Oracle" required>
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="editLocation" class="form-label">Location(s)*</label>
-                                <input type="text" class="form-control" id="editLocation" value="Bengaluru, Belgaum, Chennai" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="editJobType" class="form-label">Job Type*</label>
-                                <select class="form-select" id="editJobType" required>
-                                    <option value="in-office" selected>In Office</option>
-                                    <option value="remote">Remote</option>
-                                    <option value="hybrid">Hybrid</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="editSalary" class="form-label">Salary Range*</label>
-                                <input type="text" class="form-control" id="editSalary" value="₹3-4 LPA" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="editExperience" class="form-label">Experience Range*</label>
-                                <input type="text" class="form-control" id="editExperience" value="0-5 Years" required>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="editSkills" class="form-label">Required Skills*</label>
-                            <input type="text" class="form-control" id="editSkills" value="Java, SQL" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="editDescription" class="form-label">Job Description*</label>
-                            <textarea class="form-control" id="editDescription" rows="5" required>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</textarea>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="editResponsibilities" class="form-label">Responsibilities</label>
-                            <textarea class="form-control" id="editResponsibilities" rows="3"></textarea>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="editQualifications" class="form-label">Qualifications</label>
-                            <textarea class="form-control" id="editQualifications" rows="3"></textarea>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="editDeadline" class="form-label">Application Deadline</label>
-                                <input type="date" class="form-control" id="editDeadline">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="editStatus" class="form-label">Status</label>
-                                <select class="form-select" id="editStatus">
-                                    <option value="active" selected>Active</option>
-                                    <option value="closed">Closed</option>
-                                    <option value="draft">Draft</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
+                    <p>Are you sure you want to delete this job posting? This action cannot be undone.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Save Changes</button>
+                    <form id="deleteJobForm" method="post" action="{% url 'delete_job' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="delete_job_id" name="job_id">
+                        <button type="submit" class="btn btn-danger">Delete Job</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Handle Edit Job
+        document.querySelectorAll('.edit-job').forEach(button => {
+            button.addEventListener('click', function() {
+                const jobId = this.getAttribute('data-job-id');
+                
+                // Fetch job details
+                fetch(`/get_job_details/${jobId}/`)
+                    .then(response => response.json())
+                    .then(job => {
+                        // Populate form fields
+                        document.getElementById('job_id').value = job.id;
+                        
+                        document.getElementById('title').value = job.Job;
+                        document.getElementById('company').value = job.Org;
+                        document.getElementById('location').value = job.Location;
+                        document.getElementById('salary').value = job.Salary;
+                        document.getElementById('job_type').value = job.job_type;
+                        document.getElementById('experience').value = job.experience;
+                        document.getElementById('skills').value = Array.isArray(job.Skills) ? job.Skills.join(', ') : job.Skills;
+                        document.getElementById('description').value = job.Fulldescription;
+                        document.getElementById('education').value = job.education;
+                        document.getElementById('deadline').value = job.deadline;
+                        
+                        // Change modal title
+                        document.getElementById('jobModalTitle').textContent = 'Edit Job';
+                        
+                        // Update form action
+                        document.getElementById('jobForm').action = "{% url 'update_job' %}";
+                        
+                        // Show modal
+                        new bootstrap.Modal(document.getElementById('createJobModal')).show();
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+
+
+        
+        // Handle Delete Job
+        document.querySelectorAll('.delete-job').forEach(button => {
+            button.addEventListener('click', function() {
+                const jobId = this.getAttribute('data-job-id');
+                console.log('Job ID to delete:', jobId); // Debugging line
+                document.getElementById('delete_job_id').value = jobId;
+                console.log('Form value set to:', document.getElementById('delete_job_id').value); // Debugging line
+                new bootstrap.Modal(document.getElementById('deleteJobModal')).show();
+            });
+        });
+        // Handle Contact Applicant Modal
+        document.getElementById('contactApplicantModal').addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const email = button.getAttribute('data-email');
+            const name = button.getAttribute('data-name');
+            
+            document.getElementById('applicant_email').value = email;
+            document.getElementById('email_subject').value = `Regarding Your Job Application`;
+            document.getElementById('email_message').value = `Dear ${name},\n\nThank you for your interest in the position. We've reviewed your application and ...\n\nBest regards,\n${document.querySelector('.text-light.me-3').textContent.replace('Welcome, ', '')}`;
+        });
+        function updateJob(jobId) {
+            fetch('/hr/update-job/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ job_id: jobId, title: "Updated Job Title" })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error("Error:", data.error);
+                } else {
+                    alert("Job updated successfully!");
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+
+        document.querySelectorAll('.edit-job').forEach(button => {
+            button.addEventListener('click', function() {
+                const jobId = this.getAttribute('data-job-id');
+                console.log('Job ID to edit:', jobId); // Debugging
+        
+                // Set the form action to update_job
+                const form = document.getElementById('jobForm');
+                form.action = "{% url 'update_job' %}";
+        
+                // Set the job_id in the hidden input
+                document.getElementById('job_id').value = jobId;
+        
+                // Fetch job data and populate the form fields (if needed)
+                fetch(`/get_job_data/${jobId}/`)  // Add an endpoint to fetch job data
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('title').value = data.title;
+                        document.getElementById('company').value = data.company;
+                        document.getElementById('location').value = data.location;
+                        document.getElementById('salary').value = data.salary;
+                        document.getElementById('job_type').value = data.job_type;
+                        document.getElementById('experience').value = data.experience;
+                        document.getElementById('skills').value = data.Skills;
+                        document.getElementById('description').value = data.description;
+                        document.getElementById('education').value = data.education;
+                        document.getElementById('deadline').value = data.deadline;
+                    })
+                    .catch(error => console.error('Error fetching job data:', error));
+        
+                // Show the modal
+                new bootstrap.Modal(document.getElementById('createJobModal')).show();
+            });
+        });
+        
+    </script>
+</body>
+</html>
