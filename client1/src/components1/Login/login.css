@@ -1,0 +1,377 @@
+/* Container */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+/* Card */
+.login-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 400px;
+}
+/* Ensure password input text is visible */
+.password-input {
+  color: #333; /* Dark color for text */
+  -webkit-text-fill-color: #333; /* For Safari */
+}
+
+/* Style the password dots (bullets) */
+.password-input[type="password"] {
+  letter-spacing: 0.2em; /* Space out the password dots */
+}
+
+/* Style for when input is focused */
+.password-input:focus {
+  color: #333;
+  -webkit-text-fill-color: #333;
+}
+/* Title */
+.login-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+/* Input Group */
+.login-input-group {
+  margin-bottom: 15px;
+}
+
+.login-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+.login-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Button */
+.login-button {
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background: #0056b3;
+}
+
+/* Toggle Text */
+.login-toggle-text {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.login-toggle-text a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-toggle-text a:hover {
+  text-decoration: underline;
+}
+
+/* Social Buttons */
+.login-social-buttons {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.login-social-text {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.login-social-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.google-icon-text {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Adjust the gap between the icon and text */
+}
+
+.google-icon-text svg {
+  vertical-align: middle; /* Ensure the SVG is vertically aligned */
+}
+.login-social-button:hover {
+  background: #f8f9fa;
+}
+
+/* Error Message */
+.login-error-message {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  background: #ff6b6b;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Back Link */
+.login-back-link {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-back-link:hover {
+  text-decoration: underline;
+}
+
+
+/* Add these to your existing login.css */
+
+.invalid-input {
+  border-color: #ff6b6b !important;
+  border-width: 2px !important;
+}
+
+.validation-error {
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.invalid-input:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.25);
+}
+
+.password-requirements {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.password-requirements ul {
+  margin: 5px 0 0 0;
+  padding-left: 20px;
+}
+
+.password-requirements li {
+  margin-bottom: 2px;
+}
+
+.input-requirements {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.input-requirements ul {
+  margin: 5px 0 0 0;
+  padding-left: 20px;
+}
+
+.input-requirements li {
+  margin-bottom: 2px;
+}
+
+.input-requirements {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.input-requirements ul {
+  margin: 5px 0 0 0;
+  padding-left: 20px;
+}
+
+.input-requirements li {
+  margin-bottom: 2px;
+}
+
+/* Add these styles to your existing login.css */
+
+.login-remember-me {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  font-size: 0.9rem;
+}
+
+.login-remember-me input {
+  margin-right: 8px;
+  width: auto;
+}
+
+.login-remember-me label {
+  color: #555;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Style for invalid inputs */
+.invalid-input {
+  border-color: #ff4444 !important;
+}
+
+.validation-error {
+  color: #ff4444;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+/* Add these to your existing styles */
+
+.password-length-counter {
+  font-size: 0.75rem;
+  color: #666;
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+/* For the login form password field */
+#loginPassword {
+  position: relative;
+}
+
+#loginPassword::after {
+  content: attr(data-length-counter);
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* Add these to your existing styles */
+
+.login-split-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.login-image-container {
+  flex: 1;
+  position: relative;
+  background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+}
+
+.login-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.login-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.login-image-overlay h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.login-image-overlay p {
+  font-size: 1.2rem;
+  max-width: 80%;
+}
+
+.login-card {
+  flex: 1;
+  max-width: 500px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Adjust the container to remove previous card styling */
+.login-container {
+  max-width: 100%;
+  padding: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .login-split-container {
+    flex-direction: column;
+  }
+  
+  .login-image-container {
+    display: none;
+  }
+  
+  .login-card {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  margin: 0 auto; /* Center the spinner */
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+

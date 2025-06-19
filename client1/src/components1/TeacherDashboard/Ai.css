@@ -1,0 +1,29 @@
+.ai-generator-container {
+    position: relative;
+    top: 300px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 900px;
+    max-height: 80vh;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  }
+  
+  /* Media query for phones */
+  @media (max-width: 600px) {
+    .ai-generator-container {
+      width: 100%;
+      top: 300px;
+      padding: 12px;
+      max-height: 100vh;
+      border-radius: 10px;
+    }
+  }
+  
